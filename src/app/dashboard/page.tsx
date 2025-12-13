@@ -268,7 +268,7 @@ function NavItemComponent({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
-        {isOpen && (
+        {isOpen && item.children && (
           <ul className="mt-1 ml-4 pl-4 border-l border-border/50 space-y-1">
             {item.children.map((child) => (
               <li key={child.key}>

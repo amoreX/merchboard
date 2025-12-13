@@ -243,7 +243,7 @@ function NavItemComponent({
 }) {
   const hasChildren = item.children && item.children.length > 0;
   const isActive = hasChildren 
-    ? item.children.some(child => child.key === activeView)
+    ? item.children?.some(child => child.key === activeView) ?? false
     : item.key === activeView;
 
   if (hasChildren) {

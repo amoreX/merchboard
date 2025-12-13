@@ -3,13 +3,48 @@
 import Link from "next/link";
 import { useState } from "react";
 
+// Dashboard components
+import Overview from "@/components/dashboard/Overview";
+import Analytics from "@/components/dashboard/Analytics";
+import Sales from "@/components/dashboard/Sales";
+
+// Products components
+import AllProducts from "@/components/products/AllProducts";
+import AddProduct from "@/components/products/AddProduct";
+import Categories from "@/components/products/Categories";
+
+// Orders components
+import AllOrders from "@/components/orders/AllOrders";
+import PendingOrders from "@/components/orders/PendingOrders";
+import CompletedOrders from "@/components/orders/CompletedOrders";
+
+// Customers component
+import Customers from "@/components/customers/Customers";
+
+// Reports components
+import SalesReport from "@/components/reports/SalesReport";
+import TrafficReport from "@/components/reports/TrafficReport";
+import RevenueReport from "@/components/reports/RevenueReport";
+
+// Support components
+import Messages from "@/components/support/Messages";
+import Inbox from "@/components/support/Inbox";
+import Invoice from "@/components/support/Invoice";
+
+// Settings components
+import Profile from "@/components/settings/Profile";
+import Account from "@/components/settings/Account";
+import Security from "@/components/settings/Security";
+import HelpCenter from "@/components/settings/HelpCenter";
+
 interface NavItem {
   name: string;
   icon: React.ReactNode;
   href?: string;
   badge?: string | number;
   badgeType?: "count" | "pro";
-  children?: { name: string; href: string; badge?: string }[];
+  children?: { name: string; key: string; badge?: string }[];
+  key?: string;
 }
 
 const mainMenuItems: NavItem[] = [
@@ -21,9 +56,9 @@ const mainMenuItems: NavItem[] = [
       </svg>
     ),
     children: [
-      { name: "Overview", href: "#" },
-      { name: "Analytics", href: "#" },
-      { name: "Sales", href: "#" },
+      { name: "Overview", key: "overview" },
+      { name: "Analytics", key: "analytics" },
+      { name: "Sales", key: "sales" },
     ],
   },
   {
@@ -34,9 +69,9 @@ const mainMenuItems: NavItem[] = [
       </svg>
     ),
     children: [
-      { name: "All Products", href: "#" },
-      { name: "Add Product", href: "#" },
-      { name: "Categories", href: "#" },
+      { name: "All Products", key: "all-products" },
+      { name: "Add Product", key: "add-product" },
+      { name: "Categories", key: "categories" },
     ],
   },
   {
@@ -47,9 +82,9 @@ const mainMenuItems: NavItem[] = [
       </svg>
     ),
     children: [
-      { name: "All Orders", href: "#" },
-      { name: "Pending", href: "#" },
-      { name: "Completed", href: "#" },
+      { name: "All Orders", key: "all-orders" },
+      { name: "Pending", key: "pending-orders" },
+      { name: "Completed", key: "completed-orders" },
     ],
   },
   {
@@ -59,7 +94,7 @@ const mainMenuItems: NavItem[] = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
       </svg>
     ),
-    href: "#",
+    key: "customers",
   },
   {
     name: "Reports",
@@ -69,9 +104,9 @@ const mainMenuItems: NavItem[] = [
       </svg>
     ),
     children: [
-      { name: "Sales Report", href: "#" },
-      { name: "Traffic Report", href: "#" },
-      { name: "Revenue Report", href: "#" },
+      { name: "Sales Report", key: "sales-report" },
+      { name: "Traffic Report", key: "traffic-report" },
+      { name: "Revenue Report", key: "revenue-report" },
     ],
   },
 ];
@@ -84,7 +119,7 @@ const supportItems: NavItem[] = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
       </svg>
     ),
-    href: "#",
+    key: "messages",
     badge: 9,
     badgeType: "count",
   },
@@ -95,7 +130,7 @@ const supportItems: NavItem[] = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
       </svg>
     ),
-    href: "#",
+    key: "inbox",
     badge: "Pro",
     badgeType: "pro",
   },
@@ -106,7 +141,7 @@ const supportItems: NavItem[] = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
       </svg>
     ),
-    href: "#",
+    key: "invoice",
     badge: "Pro",
     badgeType: "pro",
   },
@@ -122,9 +157,9 @@ const otherItems: NavItem[] = [
       </svg>
     ),
     children: [
-      { name: "Profile", href: "#" },
-      { name: "Account", href: "#" },
-      { name: "Security", href: "#" },
+      { name: "Profile", key: "profile" },
+      { name: "Account", key: "account" },
+      { name: "Security", key: "security" },
     ],
   },
   {
@@ -134,12 +169,82 @@ const otherItems: NavItem[] = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
-    href: "#",
+    key: "help-center",
   },
 ];
 
-function NavItemComponent({ item, isOpen, onToggle }: { item: NavItem; isOpen: boolean; onToggle: () => void }) {
+// Component mapping
+const componentMap: Record<string, React.ComponentType> = {
+  // Dashboard
+  "overview": Overview,
+  "analytics": Analytics,
+  "sales": Sales,
+  // Products
+  "all-products": AllProducts,
+  "add-product": AddProduct,
+  "categories": Categories,
+  // Orders
+  "all-orders": AllOrders,
+  "pending-orders": PendingOrders,
+  "completed-orders": CompletedOrders,
+  // Customers
+  "customers": Customers,
+  // Reports
+  "sales-report": SalesReport,
+  "traffic-report": TrafficReport,
+  "revenue-report": RevenueReport,
+  // Support
+  "messages": Messages,
+  "inbox": Inbox,
+  "invoice": Invoice,
+  // Settings
+  "profile": Profile,
+  "account": Account,
+  "security": Security,
+  "help-center": HelpCenter,
+};
+
+// Breadcrumb mapping
+const breadcrumbMap: Record<string, { parent: string; name: string }> = {
+  "overview": { parent: "Dashboard", name: "Overview" },
+  "analytics": { parent: "Dashboard", name: "Analytics" },
+  "sales": { parent: "Dashboard", name: "Sales" },
+  "all-products": { parent: "Products", name: "All Products" },
+  "add-product": { parent: "Products", name: "Add Product" },
+  "categories": { parent: "Products", name: "Categories" },
+  "all-orders": { parent: "Orders", name: "All Orders" },
+  "pending-orders": { parent: "Orders", name: "Pending" },
+  "completed-orders": { parent: "Orders", name: "Completed" },
+  "customers": { parent: "", name: "Customers" },
+  "sales-report": { parent: "Reports", name: "Sales Report" },
+  "traffic-report": { parent: "Reports", name: "Traffic Report" },
+  "revenue-report": { parent: "Reports", name: "Revenue Report" },
+  "messages": { parent: "Support", name: "Messages" },
+  "inbox": { parent: "Support", name: "Inbox" },
+  "invoice": { parent: "Support", name: "Invoice" },
+  "profile": { parent: "Settings", name: "Profile" },
+  "account": { parent: "Settings", name: "Account" },
+  "security": { parent: "Settings", name: "Security" },
+  "help-center": { parent: "", name: "Help Center" },
+};
+
+function NavItemComponent({ 
+  item, 
+  isOpen, 
+  onToggle, 
+  activeView,
+  onViewChange 
+}: { 
+  item: NavItem; 
+  isOpen: boolean; 
+  onToggle: () => void;
+  activeView: string;
+  onViewChange: (key: string) => void;
+}) {
   const hasChildren = item.children && item.children.length > 0;
+  const isActive = hasChildren 
+    ? item.children.some(child => child.key === activeView)
+    : item.key === activeView;
 
   if (hasChildren) {
     return (
@@ -147,7 +252,7 @@ function NavItemComponent({ item, isOpen, onToggle }: { item: NavItem; isOpen: b
         <button
           onClick={onToggle}
           className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg transition-colors ${
-            isOpen ? "bg-accent/10 text-accent" : "text-foreground/60 hover:text-foreground hover:bg-border/30"
+            isOpen || isActive ? "bg-accent/10 text-accent" : "text-foreground/60 hover:text-foreground hover:bg-border/30"
           }`}
         >
           <div className="flex items-center gap-3">
@@ -166,10 +271,14 @@ function NavItemComponent({ item, isOpen, onToggle }: { item: NavItem; isOpen: b
         {isOpen && (
           <ul className="mt-1 ml-4 pl-4 border-l border-border/50 space-y-1">
             {item.children.map((child) => (
-              <li key={child.name}>
-                <a
-                  href={child.href}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-foreground/50 hover:text-foreground transition-colors rounded-lg hover:bg-border/20"
+              <li key={child.key}>
+                <button
+                  onClick={() => onViewChange(child.key)}
+                  className={`w-full text-left flex items-center gap-2 px-4 py-2 text-sm transition-colors rounded-lg ${
+                    activeView === child.key 
+                      ? "text-accent font-medium bg-accent/5" 
+                      : "text-foreground/50 hover:text-foreground hover:bg-border/20"
+                  }`}
                 >
                   {child.name}
                   {child.badge && (
@@ -177,7 +286,7 @@ function NavItemComponent({ item, isOpen, onToggle }: { item: NavItem; isOpen: b
                       {child.badge}
                     </span>
                   )}
-                </a>
+                </button>
               </li>
             ))}
           </ul>
@@ -188,9 +297,11 @@ function NavItemComponent({ item, isOpen, onToggle }: { item: NavItem; isOpen: b
 
   return (
     <li>
-      <a
-        href={item.href}
-        className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg text-foreground/60 hover:text-foreground hover:bg-border/30 transition-colors"
+      <button
+        onClick={() => item.key && onViewChange(item.key)}
+        className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg transition-colors ${
+          isActive ? "bg-accent/10 text-accent" : "text-foreground/60 hover:text-foreground hover:bg-border/30"
+        }`}
       >
         <div className="flex items-center gap-3">
           {item.icon}
@@ -207,7 +318,7 @@ function NavItemComponent({ item, isOpen, onToggle }: { item: NavItem; isOpen: b
             {item.badge}
           </span>
         )}
-      </a>
+      </button>
     </li>
   );
 }
@@ -218,10 +329,19 @@ export default function Dashboard() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [activeView, setActiveView] = useState("overview");
 
   const toggleMenu = (name: string) => {
     setOpenMenus((prev) => ({ ...prev, [name]: !prev[name] }));
   };
+
+  const handleViewChange = (key: string) => {
+    setActiveView(key);
+  };
+
+  // Get current component and breadcrumb
+  const CurrentComponent = componentMap[activeView] || Overview;
+  const breadcrumb = breadcrumbMap[activeView] || { parent: "Dashboard", name: "Overview" };
 
   return (
     <div className="min-h-screen grid-bg">
@@ -255,6 +375,8 @@ export default function Dashboard() {
                       item={item}
                       isOpen={openMenus[item.name] || false}
                       onToggle={() => toggleMenu(item.name)}
+                      activeView={activeView}
+                      onViewChange={handleViewChange}
                     />
                   ))}
                 </ul>
@@ -274,6 +396,8 @@ export default function Dashboard() {
                       item={item}
                       isOpen={openMenus[item.name] || false}
                       onToggle={() => toggleMenu(item.name)}
+                      activeView={activeView}
+                      onViewChange={handleViewChange}
                     />
                   ))}
                 </ul>
@@ -293,6 +417,8 @@ export default function Dashboard() {
                       item={item}
                       isOpen={openMenus[item.name] || false}
                       onToggle={() => toggleMenu(item.name)}
+                      activeView={activeView}
+                      onViewChange={handleViewChange}
                     />
                   ))}
                 </ul>
@@ -338,11 +464,20 @@ export default function Dashboard() {
 
               {/* Breadcrumb */}
               <nav className="hidden sm:flex items-center gap-2 text-sm">
-                <Link href="/dashboard" className="text-foreground/50 hover:text-foreground transition-colors">
+                <button 
+                  onClick={() => setActiveView("overview")}
+                  className="text-foreground/50 hover:text-foreground transition-colors"
+                >
                   Dashboard
-                </Link>
+                </button>
+                {breadcrumb.parent && (
+                  <>
+                    <span className="text-foreground/30">/</span>
+                    <span className="text-foreground/50">{breadcrumb.parent}</span>
+                  </>
+                )}
                 <span className="text-foreground/30">/</span>
-                <span className="text-foreground">Overview</span>
+                <span className="text-foreground">{breadcrumb.name}</span>
               </nav>
             </div>
 
@@ -486,25 +621,34 @@ export default function Dashboard() {
                         <p className="text-sm text-foreground/50">nihal@merchboard.com</p>
                       </div>
                       <div className="py-2">
-                        <a href="#" className="flex items-center gap-3 px-4 py-2 text-sm text-foreground/70 hover:bg-border/30 hover:text-foreground">
+                        <button 
+                          onClick={() => { setUserDropdownOpen(false); setActiveView("profile"); }}
+                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-foreground/70 hover:bg-border/30 hover:text-foreground text-left"
+                        >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                           My Profile
-                        </a>
-                        <a href="#" className="flex items-center gap-3 px-4 py-2 text-sm text-foreground/70 hover:bg-border/30 hover:text-foreground">
+                        </button>
+                        <button 
+                          onClick={() => { setUserDropdownOpen(false); setActiveView("account"); }}
+                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-foreground/70 hover:bg-border/30 hover:text-foreground text-left"
+                        >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                           </svg>
                           Settings
-                        </a>
-                        <a href="#" className="flex items-center gap-3 px-4 py-2 text-sm text-foreground/70 hover:bg-border/30 hover:text-foreground">
+                        </button>
+                        <button 
+                          onClick={() => { setUserDropdownOpen(false); setActiveView("help-center"); }}
+                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-foreground/70 hover:bg-border/30 hover:text-foreground text-left"
+                        >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                           Help Center
-                        </a>
+                        </button>
                       </div>
                       <div className="pt-2 border-t border-border">
                         <Link
@@ -527,148 +671,7 @@ export default function Dashboard() {
 
         {/* Page Content */}
         <main className="p-6">
-          {/* Page Title */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold">Dashboard</h1>
-            <p className="text-foreground/50 mt-1">Welcome back! Here&apos;s what&apos;s happening with your merch today.</p>
-          </div>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="glow bg-card border border-border rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-foreground/60 text-sm">Total Revenue</span>
-                <span className="text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded-full">+12.5%</span>
-              </div>
-              <div className="text-3xl font-bold">$24,563</div>
-              <div className="text-sm text-foreground/40 mt-1">vs. last month</div>
-            </div>
-
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-foreground/60 text-sm">Orders</span>
-                <span className="text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded-full">+8.2%</span>
-              </div>
-              <div className="text-3xl font-bold">1,247</div>
-              <div className="text-sm text-foreground/40 mt-1">vs. last month</div>
-            </div>
-
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-foreground/60 text-sm">Customers</span>
-                <span className="text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded-full">+23.1%</span>
-              </div>
-              <div className="text-3xl font-bold">3,892</div>
-              <div className="text-sm text-foreground/40 mt-1">vs. last month</div>
-            </div>
-
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-foreground/60 text-sm">Conversion</span>
-                <span className="text-xs text-red-400 bg-red-400/10 px-2 py-1 rounded-full">-2.4%</span>
-              </div>
-              <div className="text-3xl font-bold">4.28%</div>
-              <div className="text-sm text-foreground/40 mt-1">vs. last month</div>
-            </div>
-          </div>
-
-          {/* Recent Orders & Top Products */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent Orders */}
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold">Recent Orders</h2>
-                <div className="relative">
-                  <select className="appearance-none bg-background border border-border rounded-lg px-3 py-1.5 text-sm pr-8 focus:outline-none focus:border-accent cursor-pointer">
-                    <option>This Week</option>
-                    <option>This Month</option>
-                    <option>This Year</option>
-                  </select>
-                  <svg className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </div>
-              <div className="space-y-4">
-                {[
-                  { id: "#4523", customer: "John Doe", product: "Logo Hoodie", amount: "$89.99", status: "Shipped" },
-                  { id: "#4522", customer: "Jane Smith", product: "Tour T-Shirt", amount: "$34.99", status: "Processing" },
-                  { id: "#4521", customer: "Mike Wilson", product: "Cap Bundle", amount: "$49.99", status: "Delivered" },
-                  { id: "#4520", customer: "Sarah Brown", product: "Poster Set", amount: "$24.99", status: "Shipped" },
-                ].map((order) => (
-                  <div key={order.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-border flex items-center justify-center text-sm font-mono text-foreground/60">
-                        {order.id}
-                      </div>
-                      <div>
-                        <div className="font-medium">{order.customer}</div>
-                        <div className="text-sm text-foreground/50">{order.product}</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-medium">{order.amount}</div>
-                      <div
-                        className={`text-xs ${
-                          order.status === "Delivered"
-                            ? "text-green-400"
-                            : order.status === "Shipped"
-                            ? "text-blue-400"
-                            : "text-yellow-400"
-                        }`}
-                      >
-                        {order.status}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <button className="w-full mt-4 text-sm text-accent hover:text-accent-hover transition-colors">
-                View all orders →
-              </button>
-            </div>
-
-            {/* Top Products */}
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold">Top Products</h2>
-                <button className="p-2 rounded-lg hover:bg-border/30 transition-colors">
-                  <svg className="w-5 h-5 text-foreground/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                  </svg>
-                </button>
-              </div>
-              <div className="space-y-4">
-                {[
-                  { name: "Logo Hoodie", sales: 234, revenue: "$21,060", trend: "+15%" },
-                  { name: "Tour T-Shirt", sales: 189, revenue: "$6,610", trend: "+8%" },
-                  { name: "Limited Edition Cap", sales: 156, revenue: "$4,680", trend: "+23%" },
-                  { name: "Poster Bundle", sales: 98, revenue: "$2,450", trend: "-5%" },
-                ].map((product, i) => (
-                  <div key={product.name} className="flex items-center justify-between py-3 border-b border-border last:border-0">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center text-accent font-bold">
-                        {i + 1}
-                      </div>
-                      <div>
-                        <div className="font-medium">{product.name}</div>
-                        <div className="text-sm text-foreground/50">{product.sales} sales</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-medium">{product.revenue}</div>
-                      <div className={`text-xs ${product.trend.startsWith("+") ? "text-green-400" : "text-red-400"}`}>
-                        {product.trend}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <button className="w-full mt-4 text-sm text-accent hover:text-accent-hover transition-colors">
-                View all products →
-              </button>
-            </div>
-          </div>
+          <CurrentComponent />
         </main>
       </div>
     </div>

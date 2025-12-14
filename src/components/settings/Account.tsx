@@ -27,7 +27,7 @@ export default function Account() {
               <label className="block text-sm font-medium text-foreground/70 mb-2">Store Name</label>
               <input
                 type="text"
-                defaultValue="Merchboard Store"
+                defaultValue="Merch Nest Store"
                 className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-accent"
               />
             </div>
@@ -39,7 +39,7 @@ export default function Account() {
                 </span>
                 <input
                   type="text"
-                  defaultValue="merchboard.store"
+                  defaultValue="merchnest.store"
                   className="flex-1 px-4 py-2.5 bg-background border border-border rounded-r-lg text-sm focus:outline-none focus:border-accent"
                 />
               </div>

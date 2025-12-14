@@ -324,7 +324,7 @@ function NavItemComponent({
 }
 
 export default function Dashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({ Dashboard: true });
   const [searchOpen, setSearchOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -337,6 +337,10 @@ export default function Dashboard() {
 
   const handleViewChange = (key: string) => {
     setActiveView(key);
+    // Close sidebar on mobile after selecting
+    if (window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
   };
 
   // Get current component and breadcrumb
@@ -345,19 +349,38 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen grid-bg">
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      
       {/* Sidebar */}
       <aside
         className={`fixed left-0 top-0 h-full bg-card border-r border-border transition-all duration-300 z-40 ${
-          sidebarOpen ? "w-64" : "w-0 overflow-hidden"
+          sidebarOpen ? "w-64 translate-x-0" : "w-64 -translate-x-full lg:translate-x-0 lg:w-64"
         }`}
       >
         <div className="flex flex-col h-full p-4">
           {/* Logo */}
-          <div className="flex items-center gap-2 px-2 mb-6">
-            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
-              <span className="text-background font-bold text-sm">M</span>
+          <div className="flex items-center justify-between gap-2 px-2 mb-6">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
+                <span className="text-background font-bold text-sm">M</span>
+              </div>
+              <span className="font-semibold text-lg tracking-tight">Merch Nest</span>
             </div>
-            <span className="font-semibold text-lg tracking-tight">merchboard</span>
+            {/* Close button for mobile */}
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden p-1.5 rounded-lg hover:bg-border/30 transition-colors"
+            >
+              <svg className="w-5 h-5 text-foreground/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
 
           {/* Scrollable Navigation */}
@@ -447,15 +470,15 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Content */}
-      <div className={`transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-0"}`}>
+      <div className="transition-all duration-300 lg:ml-64">
         {/* Header */}
-        <header className="sticky top-0 z-30 bg-card/80 backdrop-blur-sm border-b border-border">
-          <div className="flex items-center justify-between px-6 py-4">
+        <header className="sticky top-0 z-20 bg-card/80 backdrop-blur-sm border-b border-border">
+          <div className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4">
             {/* Left: Toggle & Breadcrumb */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="p-2 rounded-lg hover:bg-border/30 transition-colors"
+                className="p-2 rounded-lg hover:bg-border/30 transition-colors lg:hidden"
               >
                 <svg className="w-5 h-5 text-foreground/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -463,26 +486,26 @@ export default function Dashboard() {
               </button>
 
               {/* Breadcrumb */}
-              <nav className="hidden sm:flex items-center gap-2 text-sm">
+              <nav className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                 <button 
                   onClick={() => setActiveView("overview")}
-                  className="text-foreground/50 hover:text-foreground transition-colors"
+                  className="text-foreground/50 hover:text-foreground transition-colors hidden sm:block"
                 >
                   Dashboard
                 </button>
                 {breadcrumb.parent && (
                   <>
-                    <span className="text-foreground/30">/</span>
-                    <span className="text-foreground/50">{breadcrumb.parent}</span>
+                    <span className="text-foreground/30 hidden sm:block">/</span>
+                    <span className="text-foreground/50 hidden md:block">{breadcrumb.parent}</span>
+                    <span className="text-foreground/30 hidden md:block">/</span>
                   </>
                 )}
-                <span className="text-foreground/30">/</span>
-                <span className="text-foreground">{breadcrumb.name}</span>
+                <span className="text-foreground font-medium">{breadcrumb.name}</span>
               </nav>
             </div>
 
             {/* Right: Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               {/* Search Button */}
               <div className="relative">
                 <button
@@ -503,7 +526,7 @@ export default function Dashboard() {
                 {searchOpen && (
                   <>
                     <div className="fixed inset-0 z-50" onClick={() => setSearchOpen(false)} />
-                    <div className="absolute right-0 top-12 w-80 bg-card border border-border rounded-xl shadow-xl z-50 p-4">
+                    <div className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-16 sm:top-12 sm:w-80 bg-card border border-border rounded-xl shadow-xl z-50 p-4">
                       <div className="relative">
                         <svg
                           className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40"
@@ -525,7 +548,7 @@ export default function Dashboard() {
                           autoFocus
                         />
                       </div>
-                      <div className="mt-3 text-xs text-foreground/40">
+                      <div className="mt-3 text-xs text-foreground/40 hidden sm:block">
                         Press <kbd className="px-1.5 py-0.5 bg-border rounded">⌘K</kbd> to open search
                       </div>
                     </div>
@@ -554,11 +577,11 @@ export default function Dashboard() {
                 {notificationsOpen && (
                   <>
                     <div className="fixed inset-0 z-50" onClick={() => setNotificationsOpen(false)} />
-                    <div className="absolute right-0 top-12 w-80 bg-card border border-border rounded-xl shadow-xl z-50">
-                      <div className="p-4 border-b border-border">
-                        <h3 className="font-semibold">Notifications</h3>
+                    <div className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-16 sm:top-12 sm:w-80 bg-card border border-border rounded-xl shadow-xl z-50">
+                      <div className="p-3 sm:p-4 border-b border-border">
+                        <h3 className="font-semibold text-sm sm:text-base">Notifications</h3>
                       </div>
-                      <div className="max-h-80 overflow-y-auto">
+                      <div className="max-h-64 sm:max-h-80 overflow-y-auto">
                         {[
                           { title: "New order received", desc: "Order #4525 from John Doe", time: "2 min ago", unread: true },
                           { title: "Product low in stock", desc: "Logo Hoodie has only 5 left", time: "1 hour ago", unread: true },
@@ -566,25 +589,25 @@ export default function Dashboard() {
                         ].map((notif, i) => (
                           <div
                             key={i}
-                            className={`px-4 py-3 border-b border-border/50 hover:bg-border/20 cursor-pointer ${
+                            className={`px-3 sm:px-4 py-2.5 sm:py-3 border-b border-border/50 hover:bg-border/20 cursor-pointer ${
                               notif.unread ? "bg-accent/5" : ""
                             }`}
                           >
-                            <div className="flex items-start gap-3">
+                            <div className="flex items-start gap-2 sm:gap-3">
                               {notif.unread && (
-                                <span className="w-2 h-2 bg-accent rounded-full mt-2 flex-shrink-0" />
+                                <span className="w-2 h-2 bg-accent rounded-full mt-1.5 sm:mt-2 flex-shrink-0" />
                               )}
-                              <div className={notif.unread ? "" : "ml-5"}>
-                                <p className="text-sm font-medium">{notif.title}</p>
+                              <div className={notif.unread ? "" : "ml-4 sm:ml-5"}>
+                                <p className="text-xs sm:text-sm font-medium">{notif.title}</p>
                                 <p className="text-xs text-foreground/50">{notif.desc}</p>
-                                <p className="text-xs text-foreground/40 mt-1">{notif.time}</p>
+                                <p className="text-xs text-foreground/40 mt-0.5 sm:mt-1">{notif.time}</p>
                               </div>
                             </div>
                           </div>
                         ))}
                       </div>
-                      <div className="p-3">
-                        <button className="w-full text-sm text-accent hover:text-accent-hover text-center">
+                      <div className="p-2.5 sm:p-3">
+                        <button className="w-full text-xs sm:text-sm text-accent hover:text-accent-hover text-center">
                           View all notifications
                         </button>
                       </div>
@@ -597,7 +620,7 @@ export default function Dashboard() {
               <div className="relative">
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-border/30 transition-colors"
+                  className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-border/30 transition-colors"
                 >
                   <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
                     <span className="text-background font-semibold text-sm">N</span>
@@ -615,14 +638,14 @@ export default function Dashboard() {
                 {userDropdownOpen && (
                   <>
                     <div className="fixed inset-0 z-50" onClick={() => setUserDropdownOpen(false)} />
-                    <div className="absolute right-0 top-14 w-56 bg-card border border-border rounded-xl shadow-xl z-50 py-2">
+                    <div className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-16 sm:top-14 sm:w-56 bg-card border border-border rounded-xl shadow-xl z-50 py-2">
                       <div className="px-4 py-3 border-b border-border">
-                        <p className="font-medium">Nihal</p>
-                        <p className="text-sm text-foreground/50">nihal@merchboard.com</p>
+                        <p className="font-medium text-sm sm:text-base">Nihal</p>
+                        <p className="text-xs sm:text-sm text-foreground/50">nihal@merchnest.com</p>
                       </div>
                       <div className="py-2">
                         <button 
-                          onClick={() => { setUserDropdownOpen(false); setActiveView("profile"); }}
+                          onClick={() => { setUserDropdownOpen(false); handleViewChange("profile"); }}
                           className="w-full flex items-center gap-3 px-4 py-2 text-sm text-foreground/70 hover:bg-border/30 hover:text-foreground text-left"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -631,7 +654,7 @@ export default function Dashboard() {
                           My Profile
                         </button>
                         <button 
-                          onClick={() => { setUserDropdownOpen(false); setActiveView("account"); }}
+                          onClick={() => { setUserDropdownOpen(false); handleViewChange("account"); }}
                           className="w-full flex items-center gap-3 px-4 py-2 text-sm text-foreground/70 hover:bg-border/30 hover:text-foreground text-left"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -641,7 +664,7 @@ export default function Dashboard() {
                           Settings
                         </button>
                         <button 
-                          onClick={() => { setUserDropdownOpen(false); setActiveView("help-center"); }}
+                          onClick={() => { setUserDropdownOpen(false); handleViewChange("help-center"); }}
                           className="w-full flex items-center gap-3 px-4 py-2 text-sm text-foreground/70 hover:bg-border/30 hover:text-foreground text-left"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -670,7 +693,7 @@ export default function Dashboard() {
         </header>
 
         {/* Page Content */}
-        <main className="p-6">
+        <main className="p-3 sm:p-6">
           <CurrentComponent />
         </main>
       </div>

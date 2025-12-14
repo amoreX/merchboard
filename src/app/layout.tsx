@@ -14,7 +14,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Merchboard",
+  title: "Merch Nest",
   description: "Your merch analytics dashboard",
 };
 

@@ -7,7 +7,7 @@ const emails = [
   { id: 2, from: "Jane Smith", email: "jane@example.com", subject: "Return request for T-Shirt", preview: "Hello, I'd like to initiate a return for my recent purchase...", time: "9:15 AM", read: false, starred: false },
   { id: 3, from: "Shipping Dept", email: "shipping@carrier.com", subject: "Delivery confirmation", preview: "Your package has been delivered to the recipient...", time: "Yesterday", read: true, starred: false },
   { id: 4, from: "Mike Wilson", email: "mike@example.com", subject: "Re: Product availability", preview: "Thanks for the quick response! I'll order it now...", time: "Yesterday", read: true, starred: true },
-  { id: 5, from: "Support Team", email: "support@merchboard.com", subject: "Weekly report summary", preview: "Here's your weekly performance summary for the store...", time: "Dec 12", read: true, starred: false },
+  { id: 5, from: "Support Team", email: "support@merchnest.com", subject: "Weekly report summary", preview: "Here's your weekly performance summary for the store...", time: "Dec 12", read: true, starred: false },
   { id: 6, from: "Sarah Brown", email: "sarah@example.com", subject: "Wholesale inquiry", preview: "Hi, I'm interested in placing a bulk order for our company...", time: "Dec 11", read: true, starred: true },
 ];
 

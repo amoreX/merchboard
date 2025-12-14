@@ -6,7 +6,7 @@ export default function Profile() {
   const [formData, setFormData] = useState({
     firstName: "Nihal",
     lastName: "",
-    email: "nihal@merchboard.com",
+    email: "nihal@merchnest.com",
     phone: "+1 (555) 000-0000",
     bio: "Merch store owner and entrepreneur. Building the best merchandise platform for creators.",
   });
@@ -136,7 +136,7 @@ export default function Profile() {
                   </div>
                   <div>
                     <div className="font-medium">Instagram</div>
-                    <div className="text-sm text-green-400">Connected as @merchboard</div>
+                    <div className="text-sm text-green-400">Connected as @merchnest</div>
                   </div>
                 </div>
                 <button className="px-4 py-2 rounded-lg text-red-400 border border-red-400/30 text-sm hover:bg-red-400/10 transition-colors">

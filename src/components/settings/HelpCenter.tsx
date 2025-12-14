@@ -123,7 +123,7 @@ export default function HelpCenter() {
             <h3 className="font-medium mb-1">Email Support</h3>
             <p className="text-sm text-foreground/50 mb-3">Get help via email</p>
             <button className="text-sm text-accent hover:text-accent-hover transition-colors">
-              support@merchboard.com
+              support@merchnest.com
             </button>
           </div>
           <div className="p-4 bg-background rounded-xl border border-border text-center">

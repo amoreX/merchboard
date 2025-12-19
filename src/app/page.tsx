@@ -108,6 +108,36 @@ const testimonials = [
   },
 ];
 
+const discoverSlides = [
+  {
+    subtitle: "Simplified link sharing and boost engagement with",
+    title: "MERCHNEST\nENGAGE",
+    creatorHandle: "@thepearshapedstylist",
+    creatorTitle: "Fashion & Styling Creator",
+    creatorFollowers: "591K",
+    creatorImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=600&fit=crop",
+    bgGradient: "from-orange-500 to-pink-500"
+  },
+  {
+    subtitle: "Build your brand and grow your audience with",
+    title: "MERCHNEST\nCREATE",
+    creatorHandle: "@fashionwithleah",
+    creatorTitle: "Lifestyle Influencer",
+    creatorFollowers: "423K",
+    creatorImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop",
+    bgGradient: "from-purple-500 to-blue-500"
+  },
+  {
+    subtitle: "Track earnings and optimize performance with",
+    title: "MERCHNEST\nANALYTICS",
+    creatorHandle: "@stylebysamantha",
+    creatorTitle: "Beauty & Fashion Creator",
+    creatorFollowers: "782K",
+    creatorImage: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=600&fit=crop",
+    bgGradient: "from-teal-500 to-green-500"
+  },
+];
+
 const faqs = [
   {
     question: "How does the Merch Nest Creator payout process work?",
@@ -191,6 +221,7 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const tutorialRef = useRef<HTMLDivElement>(null);
 
   // Handle navbar background on scroll
@@ -201,6 +232,19 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Handle slider navigation
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % discoverSlides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + discoverSlides.length) % discoverSlides.length);
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
 
   // Framer Motion scroll tracking for tutorial section
   const { scrollYProgress } = useScroll({
@@ -337,16 +381,20 @@ export default function Home() {
                 collaborate and earn
               </h1>
               <p className="hero-static-subtext">
-                Boost your social media engagement, collaborate with top brands and monetise 100% of your content with Wishlink
+                Boost your social media engagement, collaborate with top brands and monetise 100% of your content with MerchNest
               </p>
             </div>
 
             {/* Right Side - Hero Image */}
             <div className="hero-static-image-wrapper">
               <div className="hero-static-image-container">
-                <div className="hero-image-placeholder">
-                  {/* Decorative elements would go here */}
-                </div>
+                <img 
+                  src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=1000&fit=crop&auto=format&q=80" 
+                  alt="Creators collaborating and growing together"
+                  className="hero-static-image"
+                />
+                {/* Decorative overlay */}
+                <div className="hero-image-overlay"></div>
               </div>
             </div>
           </div>
@@ -434,14 +482,26 @@ export default function Home() {
           
           <div className="discover-slider">
             {/* Slide Card */}
-            <div className="discover-slide">
-              <div className="discover-slide-content">
+            <motion.div 
+              className="discover-slide"
+              key={currentSlide}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className={`discover-slide-content bg-gradient-to-br ${discoverSlides[currentSlide].bgGradient}`}>
                 {/* Left Content */}
                 <div className="discover-slide-left">
-                  <p className="discover-slide-subtitle">Simplified link sharing and boost<br />engagement with</p>
+                  <p className="discover-slide-subtitle">
+                    {discoverSlides[currentSlide].subtitle.split('\n').map((line, i) => (
+                      <span key={i}>{line}<br /></span>
+                    ))}
+                  </p>
                   <h3 className="discover-slide-title">
-                    MERCHNEST<br />
-                    ENGAGE
+                    {discoverSlides[currentSlide].title.split('\n').map((line, i) => (
+                      <span key={i}>{line}<br /></span>
+                    ))}
                   </h3>
                   <button className="discover-read-more">READ MORE</button>
                   
@@ -469,33 +529,39 @@ export default function Home() {
 
                 {/* Right Content - Creator Image */}
                 <div className="discover-slide-right">
-                  <div className="discover-creator-image">
-                    {/* Placeholder for creator image */}
+                  <div 
+                    className="discover-creator-image"
+                    style={{ 
+                      backgroundImage: `url(${discoverSlides[currentSlide].creatorImage})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }}
+                  >
                   </div>
                   
                   {/* Creator Badge */}
                   <div className="discover-creator-badge">
-                    <div className="creator-badge-handle">@thepearshapedstylist</div>
-                    <div className="creator-badge-title">Fashion & Styling Creator</div>
+                    <div className="creator-badge-handle">{discoverSlides[currentSlide].creatorHandle}</div>
+                    <div className="creator-badge-title">{discoverSlides[currentSlide].creatorTitle}</div>
                     <div className="creator-badge-followers">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                         <circle cx="12" cy="12" r="10" />
                       </svg>
-                      591K Followers
+                      {discoverSlides[currentSlide].creatorFollowers} Followers
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Slider Navigation */}
             <div className="discover-navigation">
-              <button className="discover-nav-btn">
+              <button className="discover-nav-btn" onClick={prevSlide}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M15 18l-6-6 6-6" />
                 </svg>
               </button>
-              <button className="discover-nav-btn">
+              <button className="discover-nav-btn" onClick={nextSlide}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9 18l6-6-6-6" />
                 </svg>
@@ -504,9 +570,13 @@ export default function Home() {
 
             {/* Slider Dots */}
             <div className="discover-dots">
-              <span className="discover-dot active"></span>
-              <span className="discover-dot"></span>
-              <span className="discover-dot"></span>
+              {discoverSlides.map((_, index) => (
+                <button
+                  key={index}
+                  className={`discover-dot ${index === currentSlide ? 'active' : ''}`}
+                  onClick={() => goToSlide(index)}
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -515,6 +585,45 @@ export default function Home() {
       {/* SECTION 5: Sticky Tutorial Steps */}
       <div ref={tutorialRef} className="tutorial-root">
         <section className="tutorial-sticky-section">
+          {/* Step Counter - Only show for steps 1-3 */}
+          <motion.div 
+            className="tutorial-step-counter"
+            style={{ 
+              opacity: useTransform(scrollYProgress, [0, 0.2, 0.75, 0.8], [0, 1, 1, 0])
+            }}
+          >
+            <div className="step-counter-wrapper">
+              <motion.div 
+                className="step-counter-item"
+                style={{ opacity: step1Opacity }}
+              >
+                <span className="step-counter-text">Step 1 of 3</span>
+              </motion.div>
+              <motion.div 
+                className="step-counter-item"
+                style={{ opacity: step2Opacity }}
+              >
+                <span className="step-counter-text">Step 2 of 3</span>
+              </motion.div>
+              <motion.div 
+                className="step-counter-item"
+                style={{ opacity: step3Opacity }}
+              >
+                <span className="step-counter-text">Step 3 of 3</span>
+              </motion.div>
+            </div>
+            
+            {/* Progress Bar */}
+            <div className="tutorial-progress-bar">
+              <motion.div 
+                className="tutorial-progress-fill"
+                style={{ 
+                  width: useTransform(scrollYProgress, [0.2, 0.75], ["0%", "100%"])
+                }}
+              />
+            </div>
+          </motion.div>
+
           <div className="tutorial-content-grid">
             {/* Left Side - Dynamic Step Content */}
             <div className="tutorial-left">

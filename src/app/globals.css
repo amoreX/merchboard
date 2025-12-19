@@ -865,12 +865,31 @@ h1, h2, h3, h4, h5, h6, p {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  border-radius: 2rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
-.hero-image-placeholder {
+.hero-static-image {
   width: 100%;
   height: 100%;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect fill="%23f0e6d6" width="800" height="600"/><text x="50%%" y="50%%" text-anchor="middle" dy=".3em" fill="%239a8a7a" font-size="24" font-family="sans-serif">Hero Image</text></svg>') center/contain no-repeat;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s ease;
+}
+
+.hero-static-image-container:hover .hero-static-image {
+  transform: scale(1.05);
+}
+
+.hero-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.1) 0%, rgba(255, 99, 71, 0.1) 100%);
+  pointer-events: none;
 }
 
 @media screen and (max-width: 1200px) {
@@ -1072,12 +1091,12 @@ h1, h2, h3, h4, h5, h6, p {
   position: relative;
   max-width: 1200px;
   margin: 0 auto;
+  overflow: hidden;
 }
 
 .discover-slide {
   border-radius: 2rem;
   overflow: hidden;
-  background: linear-gradient(135deg, #FF8C00 0%, #FF6347 100%);
   min-height: 500px;
   position: relative;
 }
@@ -1089,6 +1108,9 @@ h1, h2, h3, h4, h5, h6, p {
   padding: 3rem;
   gap: 2rem;
   min-height: 500px;
+  border-radius: 2rem;
+  color: white;
+  transition: all 0.5s ease;
 }
 
 .discover-slide-left {
@@ -1167,8 +1189,9 @@ h1, h2, h3, h4, h5, h6, p {
 .discover-creator-image {
   width: 100%;
   height: 500px;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><rect fill="%23e0d0c0" width="400" height="500"/><text x="50%%" y="50%%" text-anchor="middle" dy=".3em" fill="%239a8a7a" font-size="20" font-family="sans-serif">Creator Image</text></svg>') center/cover no-repeat;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 1rem;
+  transition: all 0.5s ease;
 }
 
 .discover-creator-badge {
@@ -1248,6 +1271,9 @@ h1, h2, h3, h4, h5, h6, p {
   background: rgba(26, 26, 26, 0.2);
   cursor: pointer;
   transition: all 0.3s ease;
+  border: none;
+  padding: 0;
+  outline: none;
 }
 
 .discover-dot.active {
@@ -1348,11 +1374,61 @@ h1, h2, h3, h4, h5, h6, p {
   height: 100vh;
   background: linear-gradient(135deg, #FF8C00 0%, #FF6347 100%);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   color: white;
   overflow: hidden;
   z-index: 1;
+}
+
+/* Step Counter */
+.tutorial-step-counter {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 400px;
+  z-index: 10;
+}
+
+.step-counter-wrapper {
+  position: relative;
+  text-align: center;
+  margin-bottom: 1rem;
+  height: 30px;
+}
+
+.step-counter-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.step-counter-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  opacity: 0.9;
+}
+
+.tutorial-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.tutorial-progress-fill {
+  height: 100%;
+  background: white;
+  border-radius: 2px;
+  transition: width 0.3s ease;
 }
 
 .tutorial-content-grid {
@@ -1457,6 +1533,16 @@ h1, h2, h3, h4, h5, h6, p {
     position: relative;
     height: auto;
     min-height: 100vh;
+  }
+  
+  .tutorial-step-counter {
+    top: 1rem;
+    max-width: 300px;
+  }
+  
+  .step-counter-text {
+    font-size: 0.875rem;
+    letter-spacing: 1px;
   }
 }
 

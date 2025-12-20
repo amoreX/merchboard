@@ -22,6 +22,7 @@ import {
   DashboardHeader,
   NotificationBell,
   PageContainer,
+  Icon,
 } from '@/components/ui';
 import { InfluencerProduct, InfluencerCampaign } from '@/types';
 import { 
@@ -105,10 +106,10 @@ function OverviewTab() {
   const activeProducts = products.filter(p => p.status === 'active').length;
 
   const stats = [
-    { label: 'Total Earnings', value: `₹${totalEarnings.toLocaleString()}`, change: '+12.5%', positive: true, icon: '💰' },
-    { label: 'Total Clicks', value: totalClicks.toLocaleString(), change: '+8.3%', positive: true, icon: '👆' },
-    { label: 'Conversions', value: totalSales.toLocaleString(), change: '+15.2%', positive: true, icon: '🎯' },
-    { label: 'Active Products', value: activeProducts.toString(), change: `+${products.length - activeProducts}`, positive: true, icon: '🛍️' },
+    { label: 'Total Earnings', value: `₹${totalEarnings.toLocaleString()}`, change: '+12.5%', positive: true, icon: 'wallet' },
+    { label: 'Total Clicks', value: totalClicks.toLocaleString(), change: '+8.3%', positive: true, icon: 'click' },
+    { label: 'Conversions', value: totalSales.toLocaleString(), change: '+15.2%', positive: true, icon: 'target' },
+    { label: 'Active Products', value: activeProducts.toString(), change: `+${products.length - activeProducts}`, positive: true, icon: 'shopping-bag' },
   ];
 
   const recentNotifications = notifications.slice(0, 4);
@@ -126,21 +127,21 @@ function OverviewTab() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card hover className="cursor-pointer group">
           <div className="flex items-center gap-3 mb-2">
-            <span className="text-2xl">🔗</span>
+            <Icon name="link" size={24} />
             <span className="font-semibold group-hover:text-accent transition-colors">Share Product Link</span>
           </div>
           <p className="text-sm text-foreground/60">Generate affiliate links for your content</p>
         </Card>
         <Card hover className="cursor-pointer group">
           <div className="flex items-center gap-3 mb-2">
-            <span className="text-2xl">📢</span>
+            <Icon name="megaphone" size={24} />
             <span className="font-semibold group-hover:text-accent transition-colors">View Campaigns</span>
           </div>
           <p className="text-sm text-foreground/60">{campaigns.filter(c => c.status === 'available').length} new campaign opportunities</p>
         </Card>
         <Card hover className="cursor-pointer group">
           <div className="flex items-center gap-3 mb-2">
-            <span className="text-2xl">💬</span>
+            <Icon name="chat" size={24} />
             <span className="font-semibold group-hover:text-accent transition-colors">Auto-Messages</span>
           </div>
           <p className="text-sm text-foreground/60">{autoMessages.reduce((sum, m) => sum + m.deliveries, 0).toLocaleString()} messages sent</p>
@@ -161,7 +162,7 @@ function OverviewTab() {
                     notification.type === 'payout' ? 'bg-accent/10 text-accent' :
                     'bg-purple-500/10 text-purple-500'
                   }`}>
-                    {notification.type === 'sale' ? '💵' : notification.type === 'campaign' ? '📢' : notification.type === 'payout' ? '💰' : '👆'}
+                    <Icon name={notification.type === 'sale' ? 'wallet' : notification.type === 'campaign' ? 'megaphone' : notification.type === 'payout' ? 'credit-card' : 'click'} size={16} />
                   </div>
                   <div>
                     <span className="text-sm font-medium">{notification.title}</span>
@@ -173,7 +174,7 @@ function OverviewTab() {
             ))}
           </div>
         ) : (
-          <EmptyState icon="📭" title="No recent activity" description="Your recent activities will appear here" />
+          <EmptyState icon="chat" title="No recent activity" description="Your recent activities will appear here" />
         )}
       </Card>
     </div>
@@ -259,7 +260,7 @@ function ProfileTab() {
               return (
                 <div key={platform} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                   <div className="flex items-center gap-3">
-                    <span className="text-lg">{platform === 'instagram' ? '📸' : platform === 'youtube' ? '📺' : '🎵'}</span>
+                    <Icon name={platform === 'instagram' ? 'camera' : platform === 'youtube' ? 'play' : 'music'} size={18} />
                     <div>
                       <p className="font-medium capitalize">{platform}</p>
                       <p className="text-xs text-foreground/60">{social?.connected ? social.handle : 'Not connected'}</p>
@@ -388,7 +389,7 @@ function ProductsTab() {
             className="p-1 hover:bg-border rounded transition-colors" 
             title={product.status === 'hidden' ? 'Show' : 'Hide'}
           >
-            {product.status === 'hidden' ? '👁️' : '🙈'}
+            <Icon name={product.status === 'hidden' ? 'eye' : 'eye-slash'} size={16} />
           </button>
           <button 
             onClick={() => setDeleteConfirm(product.id)}
@@ -559,7 +560,7 @@ function CampaignsTab() {
           </div>
         ) : (
           <EmptyState 
-            icon="📢" 
+            icon="megaphone" 
             title="No available campaigns" 
             description="Check back later for new opportunities"
           />
@@ -599,7 +600,7 @@ function CampaignsTab() {
             keyExtractor={(c) => c.id}
           />
         ) : (
-          <EmptyState icon="📋" title="No active campaigns" description="Accept campaigns to see them here" />
+          <EmptyState icon="clipboard" title="No active campaigns" description="Accept campaigns to see them here" />
         )}
       </div>
     </div>
@@ -636,10 +637,10 @@ function MessagingTab() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard label="Total Sent" value={totalDeliveries.toLocaleString()} icon="📤" />
-        <StatCard label="Opens" value={totalOpens.toLocaleString()} icon="👀" />
-        <StatCard label="Link Clicks" value={totalClicks.toLocaleString()} icon="🔗" />
-        <StatCard label="Click Rate" value={`${totalDeliveries > 0 ? ((totalClicks / totalDeliveries) * 100).toFixed(1) : 0}%`} icon="📈" />
+        <StatCard label="Total Sent" value={totalDeliveries.toLocaleString()} icon="send" />
+        <StatCard label="Opens" value={totalOpens.toLocaleString()} icon="eye" />
+        <StatCard label="Link Clicks" value={totalClicks.toLocaleString()} icon="link" />
+        <StatCard label="Click Rate" value={`${totalDeliveries > 0 ? ((totalClicks / totalDeliveries) * 100).toFixed(1) : 0}%`} icon="trending-up" />
       </div>
 
       {/* Keyword Setup */}
@@ -673,7 +674,7 @@ function MessagingTab() {
             ))}
           </div>
         ) : (
-          <EmptyState icon="💬" title="No keywords set up" description="Add keywords to start auto-messaging" />
+          <EmptyState icon="chat" title="No keywords set up" description="Add keywords to start auto-messaging" />
         )}
       </Card>
 
@@ -727,10 +728,10 @@ function AnalyticsTab() {
     <div className="space-y-6">
       {/* Earnings Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard label="Total Earnings" value={`₹${totalEarnings.toLocaleString()}`} change="+12.5%" icon="💰" />
-        <StatCard label="This Month" value="₹45,230" change="+8.3%" icon="📅" />
-        <StatCard label="Pending" value={`₹${pendingEarnings.toLocaleString()}`} icon="⏳" />
-        <StatCard label="Paid Out" value={`₹${paidOut.toLocaleString()}`} icon="✅" />
+        <StatCard label="Total Earnings" value={`₹${totalEarnings.toLocaleString()}`} change="+12.5%" icon="wallet" />
+        <StatCard label="This Month" value="₹45,230" change="+8.3%" icon="calendar" />
+        <StatCard label="Pending" value={`₹${pendingEarnings.toLocaleString()}`} icon="clock" />
+        <StatCard label="Paid Out" value={`₹${paidOut.toLocaleString()}`} icon="check" />
       </div>
 
       {/* Charts Placeholder */}
@@ -738,13 +739,13 @@ function AnalyticsTab() {
         <Card>
           <h3 className="font-semibold mb-4">Earnings Over Time</h3>
           <div className="h-64 flex items-center justify-center text-foreground/40 border border-dashed border-border rounded-lg">
-            📊 Chart visualization (integrate with recharts/chart.js)
+            <Icon name="chart" size={24} className="inline mr-2" /> Chart visualization (integrate with recharts/chart.js)
           </div>
         </Card>
         <Card>
           <h3 className="font-semibold mb-4">Clicks vs Conversions</h3>
           <div className="h-64 flex items-center justify-center text-foreground/40 border border-dashed border-border rounded-lg">
-            📈 Chart visualization (integrate with recharts/chart.js)
+            <Icon name="trending-up" size={24} className="inline mr-2" /> Chart visualization (integrate with recharts/chart.js)
           </div>
         </Card>
       </div>
@@ -817,13 +818,13 @@ function PaymentsTab() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-accent/5 border-accent/30">
           <div className="flex items-center gap-3 mb-2">
-            <span className="text-2xl">💰</span>
+            <Icon name="wallet" size={24} />
             <span className="text-foreground/60">Available Balance</span>
           </div>
           <p className="text-3xl font-bold text-accent">₹{availableBalance.toLocaleString()}</p>
         </Card>
-        <StatCard label="Pending" value={`₹${pendingEarnings.toLocaleString()}`} icon="⏳" />
-        <StatCard label="Total Paid" value={`₹${totalPaid.toLocaleString()}`} icon="✅" />
+        <StatCard label="Pending" value={`₹${pendingEarnings.toLocaleString()}`} icon="clock" />
+        <StatCard label="Total Paid" value={`₹${totalPaid.toLocaleString()}`} icon="check" />
       </div>
 
       {/* Bank Details */}
@@ -862,7 +863,7 @@ function PaymentsTab() {
                     payout.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500' :
                     'bg-blue-500/10 text-blue-500'
                   }`}>
-                    {payout.status === 'completed' ? '✓' : payout.status === 'pending' ? '⏳' : '↻'}
+                    <Icon name={payout.status === 'completed' ? 'check' : payout.status === 'pending' ? 'clock' : 'refresh'} size={14} />
                   </div>
                   <div>
                     <p className="font-medium">₹{payout.amount.toLocaleString()}</p>
@@ -879,7 +880,7 @@ function PaymentsTab() {
             ))}
           </div>
         ) : (
-          <EmptyState icon="💸" title="No payouts yet" description="Request your first payout above" />
+          <EmptyState icon="credit-card" title="No payouts yet" description="Request your first payout above" />
         )}
       </Card>
 
@@ -903,7 +904,7 @@ function PaymentsTab() {
                   payoutMethod === 'bank' ? 'bg-accent/10 border-2 border-accent' : 'bg-background border border-border'
                 }`}
               >
-                <span className="text-2xl mb-2 block">🏦</span>
+                <div className="mb-2"><Icon name="bank" size={24} /></div>
                 <p className="font-medium">Bank Transfer</p>
               </button>
               <button
@@ -912,7 +913,7 @@ function PaymentsTab() {
                   payoutMethod === 'upi' ? 'bg-accent/10 border-2 border-accent' : 'bg-background border border-border'
                 }`}
               >
-                <span className="text-2xl mb-2 block">📱</span>
+                <div className="mb-2"><Icon name="phone" size={24} /></div>
                 <p className="font-medium">UPI</p>
               </button>
             </div>
@@ -1009,7 +1010,7 @@ function SupportTab() {
       </Card>
 
       {/* Tips */}
-      <Alert type="info" title="💡 Onboarding Tips">
+      <Alert type="info" title="Onboarding Tips">
         <ul className="list-disc list-inside space-y-1 mt-2">
           {ONBOARDING_TIPS.map((tip, i) => (
             <li key={i}>{tip}</li>

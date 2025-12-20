@@ -3,6 +3,7 @@
 import { useAuthStore, UserRole } from '@/store/authStore';
 import { useRouter } from 'next/navigation';
 import { ROLE_OPTIONS } from '@/constants';
+import { Icon } from '@/components/ui';
 
 export default function RoleSelection() {
   const { user, setRole, logout } = useAuthStore();
@@ -44,8 +45,8 @@ export default function RoleSelection() {
               className={`group text-left p-6 bg-gradient-to-br from-card to-card/80 border border-border rounded-2xl transition-all hover:border-accent/30 hover:shadow-xl hover:shadow-accent/10 hover:-translate-y-2 ${role.borderColor} animate-fade-in-up`}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${role.gradient} flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
-                {role.icon}
+              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${role.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg text-accent`}>
+                <Icon name={role.icon} size={28} />
               </div>
               
               <h3 className="text-xl font-bold mb-2 group-hover:text-accent transition-colors">

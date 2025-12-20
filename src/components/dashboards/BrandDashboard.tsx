@@ -22,6 +22,7 @@ import {
   DashboardHeader,
   NotificationBell,
   PageContainer,
+  Icon,
 } from '@/components/ui';
 import { BrandProduct, BrandCampaign, InfluencerDiscovery } from '@/types';
 import {
@@ -106,10 +107,10 @@ function OverviewTab() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Sales" value={`₹${totalRevenue.toLocaleString()}`} change="+18.2%" icon="💰" />
-        <StatCard label="Active Campaigns" value={activeCampaigns.length.toString()} change={`+${activeCampaigns.length}`} icon="📢" />
-        <StatCard label="Partner Influencers" value={partnerInfluencers.toString()} icon="⭐" />
-        <StatCard label="Total Spent" value={`₹${totalSpent.toLocaleString()}`} icon="💸" />
+        <StatCard label="Total Sales" value={`₹${totalRevenue.toLocaleString()}`} change="+18.2%" icon="wallet" />
+        <StatCard label="Active Campaigns" value={activeCampaigns.length.toString()} change={`+${activeCampaigns.length}`} icon="megaphone" />
+        <StatCard label="Partner Influencers" value={partnerInfluencers.toString()} icon="star" />
+        <StatCard label="Total Spent" value={`₹${totalSpent.toLocaleString()}`} icon="credit-card" />
       </div>
 
       {/* Active Campaigns */}
@@ -149,7 +150,7 @@ function OverviewTab() {
             ))}
           </div>
         ) : (
-          <EmptyState icon="📢" title="No active campaigns" description="Create your first campaign to get started" />
+          <EmptyState icon="megaphone" title="No active campaigns" description="Create your first campaign to get started" />
         )}
       </Card>
 
@@ -315,7 +316,9 @@ function ProductsTab() {
       header: 'Actions',
       render: (p: BrandProduct) => (
         <div className="flex gap-2">
-          <Button size="sm" variant="ghost" onClick={() => setDeleteConfirm(p.id)}>🗑️</Button>
+          <Button size="sm" variant="ghost" onClick={() => setDeleteConfirm(p.id)}>
+              <Icon name="trash" size={16} />
+            </Button>
         </div>
       ),
     },
@@ -595,10 +598,10 @@ function PerformanceTab() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard label="Total Sales" value={totalSales.toString()} icon="🛒" />
-        <StatCard label="Total Revenue" value={`₹${totalRevenue.toLocaleString()}`} icon="💰" />
-        <StatCard label="Campaign Spend" value={`₹${totalSpent.toLocaleString()}`} icon="💸" />
-        <StatCard label="ROI" value={`${roi.toFixed(1)}%`} change={roi > 0 ? `+${roi.toFixed(0)}%` : ''} positive={roi > 0} icon="📈" />
+        <StatCard label="Total Sales" value={totalSales.toString()} icon="cart" />
+        <StatCard label="Total Revenue" value={`₹${totalRevenue.toLocaleString()}`} icon="wallet" />
+        <StatCard label="Campaign Spend" value={`₹${totalSpent.toLocaleString()}`} icon="credit-card" />
+        <StatCard label="ROI" value={`${roi.toFixed(1)}%`} change={roi > 0 ? `+${roi.toFixed(0)}%` : ''} positive={roi > 0} icon="trending-up" />
       </div>
 
       {/* Charts Placeholder */}
@@ -660,13 +663,13 @@ function PaymentsTab() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-accent/5 border-accent/30">
           <div className="flex items-center gap-3 mb-2">
-            <span className="text-2xl">💰</span>
+            <Icon name="wallet" size={24} />
             <span className="text-foreground/60">Wallet Balance</span>
           </div>
           <p className="text-3xl font-bold text-accent">₹{walletBalance.toLocaleString()}</p>
         </Card>
-        <StatCard label="Total Spent" value={`₹${totalSpent.toLocaleString()}`} icon="💸" />
-        <StatCard label="Pending Invoices" value={invoices.filter(i => i.status === 'pending').length.toString()} icon="📄" />
+        <StatCard label="Total Spent" value={`₹${totalSpent.toLocaleString()}`} icon="credit-card" />
+        <StatCard label="Pending Invoices" value={invoices.filter(i => i.status === 'pending').length.toString()} icon="document" />
       </div>
 
       <Button onClick={() => setShowAddFundsModal(true)} size="lg" className="w-full">
@@ -700,7 +703,7 @@ function PaymentsTab() {
             keyExtractor={(p) => p.id}
           />
         ) : (
-          <EmptyState icon="💳" title="No payments yet" />
+          <EmptyState icon="credit-card" title="No payments yet" />
         )}
       </Card>
 

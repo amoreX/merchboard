@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Icon } from "@/components/ui";
 
 const faqs = [
   { 
@@ -26,10 +27,10 @@ const faqs = [
 ];
 
 const resources = [
-  { title: "Getting Started Guide", description: "Learn the basics of setting up your store", icon: "📚" },
-  { title: "Video Tutorials", description: "Watch step-by-step guides", icon: "🎥" },
-  { title: "API Documentation", description: "Integrate with our API", icon: "💻" },
-  { title: "Community Forum", description: "Connect with other sellers", icon: "💬" },
+  { title: "Getting Started Guide", description: "Learn the basics of setting up your store", icon: "book" },
+  { title: "Video Tutorials", description: "Watch step-by-step guides", icon: "video" },
+  { title: "API Documentation", description: "Integrate with our API", icon: "code" },
+  { title: "Community Forum", description: "Connect with other sellers", icon: "chat" },
 ];
 
 export default function HelpCenter() {
@@ -70,7 +71,9 @@ export default function HelpCenter() {
             key={resource.title}
             className="bg-card border border-border rounded-2xl p-6 hover:border-accent/30 transition-colors cursor-pointer group"
           >
-            <div className="text-3xl mb-3">{resource.icon}</div>
+            <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent mb-3">
+              <Icon name={resource.icon} size={24} />
+            </div>
             <h3 className="font-semibold group-hover:text-accent transition-colors">{resource.title}</h3>
             <p className="text-sm text-foreground/50 mt-1">{resource.description}</p>
           </div>

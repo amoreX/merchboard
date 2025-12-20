@@ -1,6 +1,8 @@
 "use client";
 
 import { ReactNode, ButtonHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
+import { Icon } from './Icons';
+export * from './Icons';
 
 // ============================================
 // Button Component
@@ -225,12 +227,23 @@ export function StatCard({
     pink: 'from-pink-500/20 to-rose-500/10 border-pink-500/30',
   };
 
+  // Check if icon is an icon name (no emojis)
+  const isIconName = icon && !icon.match(/[\u{1F300}-\u{1F9FF}]/u);
+
   return (
     <div className={`p-5 rounded-2xl border transition-all hover:scale-[1.02] ${
       gradient ? `bg-gradient-to-br ${gradients[gradient]}` : 'bg-card border-border hover:border-accent/30'
     }`}>
       <div className="flex items-center justify-between mb-3">
-        {icon && <span className="text-2xl">{icon}</span>}
+        {icon && (
+          isIconName ? (
+            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+              <Icon name={icon} size={20} />
+            </div>
+          ) : (
+            <span className="text-2xl">{icon}</span>
+          )
+        )}
         {change && (
           <span
             className={`text-xs font-medium px-2.5 py-1 rounded-full ${
@@ -394,15 +407,22 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({
-  icon = '📭',
+  icon = 'chat',
   title,
   description,
   action,
 }: EmptyStateProps) {
+  // Check if icon is an icon name (no emojis)
+  const isIconName = icon && !icon.match(/[\u{1F300}-\u{1F9FF}]/u);
+  
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-5">
-        <span className="text-4xl">{icon}</span>
+      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-5 text-accent">
+        {isIconName ? (
+          <Icon name={icon} size={40} />
+        ) : (
+          <span className="text-4xl">{icon}</span>
+        )}
       </div>
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
       {description && (
@@ -585,7 +605,7 @@ export function ConfirmDialog({
         <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center ${
           variant === 'danger' ? 'bg-red-500/20' : 'bg-accent/20'
         }`}>
-          <span className="text-3xl">{variant === 'danger' ? '⚠️' : '❓'}</span>
+          <Icon name={variant === 'danger' ? 'exclamation' : 'help'} size={32} />
         </div>
         <h3 className="text-lg font-semibold mb-2">{title}</h3>
         {description && (
@@ -634,16 +654,16 @@ export function Alert({
   };
 
   const icons = {
-    info: 'ℹ️',
-    success: '✅',
-    warning: '⚠️',
-    error: '❌',
+    info: 'info',
+    success: 'check-circle',
+    warning: 'exclamation',
+    error: 'x-mark',
   };
 
   return (
     <div className={`border rounded-xl p-4 ${types[type]}`}>
       <div className="flex items-start gap-3">
-        <span className="text-xl">{icons[type]}</span>
+        <Icon name={icons[type]} size={20} />
         <div className="flex-1">
           {title && <p className="font-medium mb-1">{title}</p>}
           <div className="text-sm opacity-90">{children}</div>
@@ -770,7 +790,9 @@ export function Sidebar({
                 : 'hover:bg-border/50 text-foreground/70 hover:text-foreground'
             }`}
           >
-            <span className="text-lg flex-shrink-0">{tab.icon}</span>
+            <span className="flex-shrink-0">
+              <Icon name={tab.icon} size={20} />
+            </span>
             {isOpen && <span className="font-medium text-sm">{tab.label}</span>}
           </button>
         ))}

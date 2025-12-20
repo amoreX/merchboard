@@ -33,37 +33,37 @@ export type BrandTab = 'overview' | 'profile' | 'products' | 'campaigns' | 'infl
 export type AdminTab = 'overview' | 'users' | 'products' | 'campaigns' | 'messaging' | 'analytics' | 'payments' | 'moderation' | 'system';
 
 export const INFLUENCER_TABS: { id: InfluencerTab; label: string; icon: string }[] = [
-  { id: 'overview', label: 'Overview', icon: '📊' },
-  { id: 'profile', label: 'Profile & Store', icon: '👤' },
-  { id: 'products', label: 'Products', icon: '🛍️' },
-  { id: 'campaigns', label: 'Campaigns', icon: '📢' },
-  { id: 'messaging', label: 'Auto-Messaging', icon: '💬' },
-  { id: 'analytics', label: 'Analytics', icon: '📈' },
-  { id: 'payments', label: 'Payments', icon: '💰' },
-  { id: 'support', label: 'Support', icon: '❓' },
+  { id: 'overview', label: 'Overview', icon: 'dashboard' },
+  { id: 'profile', label: 'Profile & Store', icon: 'user' },
+  { id: 'products', label: 'Products', icon: 'shopping-bag' },
+  { id: 'campaigns', label: 'Campaigns', icon: 'megaphone' },
+  { id: 'messaging', label: 'Auto-Messaging', icon: 'chat' },
+  { id: 'analytics', label: 'Analytics', icon: 'chart' },
+  { id: 'payments', label: 'Payments', icon: 'wallet' },
+  { id: 'support', label: 'Support', icon: 'help' },
 ];
 
 export const BRAND_TABS: { id: BrandTab; label: string; icon: string }[] = [
-  { id: 'overview', label: 'Overview', icon: '📊' },
-  { id: 'profile', label: 'Brand Profile', icon: '🏢' },
-  { id: 'products', label: 'Products', icon: '📦' },
-  { id: 'campaigns', label: 'Campaigns', icon: '📢' },
-  { id: 'influencers', label: 'Influencers', icon: '⭐' },
-  { id: 'performance', label: 'Performance', icon: '📈' },
-  { id: 'payments', label: 'Payments', icon: '💳' },
-  { id: 'support', label: 'Support', icon: '❓' },
+  { id: 'overview', label: 'Overview', icon: 'dashboard' },
+  { id: 'profile', label: 'Brand Profile', icon: 'building' },
+  { id: 'products', label: 'Products', icon: 'box' },
+  { id: 'campaigns', label: 'Campaigns', icon: 'megaphone' },
+  { id: 'influencers', label: 'Influencers', icon: 'star' },
+  { id: 'performance', label: 'Performance', icon: 'chart' },
+  { id: 'payments', label: 'Payments', icon: 'credit-card' },
+  { id: 'support', label: 'Support', icon: 'help' },
 ];
 
 export const ADMIN_TABS: { id: AdminTab; label: string; icon: string }[] = [
-  { id: 'overview', label: 'Overview', icon: '📊' },
-  { id: 'users', label: 'Users', icon: '👥' },
-  { id: 'products', label: 'Products', icon: '📦' },
-  { id: 'campaigns', label: 'Campaigns', icon: '📢' },
-  { id: 'messaging', label: 'Messaging', icon: '💬' },
-  { id: 'analytics', label: 'Analytics', icon: '📈' },
-  { id: 'payments', label: 'Payments', icon: '💰' },
-  { id: 'moderation', label: 'Moderation', icon: '🛡️' },
-  { id: 'system', label: 'System', icon: '⚙️' },
+  { id: 'overview', label: 'Overview', icon: 'dashboard' },
+  { id: 'users', label: 'Users', icon: 'users' },
+  { id: 'products', label: 'Products', icon: 'box' },
+  { id: 'campaigns', label: 'Campaigns', icon: 'megaphone' },
+  { id: 'messaging', label: 'Messaging', icon: 'chat' },
+  { id: 'analytics', label: 'Analytics', icon: 'chart' },
+  { id: 'payments', label: 'Payments', icon: 'wallet' },
+  { id: 'moderation', label: 'Moderation', icon: 'shield' },
+  { id: 'system', label: 'System', icon: 'cog' },
 ];
 
 // ============================================
@@ -87,25 +87,25 @@ export const LANDING_FEATURE_CARDS = [
   {
     title: 'Monetize 100% of your content',
     description: 'Earn commissions on every post with huge rewards',
-    icon: '💰',
+    icon: 'wallet',
     gradient: 'from-yellow-500/20 to-orange-500/20',
   },
   {
     title: 'Connect with 250+ Brands',
     description: 'Partner with leading brands for collaborations',
-    icon: '🤝',
+    icon: 'handshake',
     gradient: 'from-blue-500/20 to-cyan-500/20',
   },
   {
     title: 'Boost your influence',
     description: 'Grow your followers and engagement',
-    icon: '📈',
+    icon: 'trending-up',
     gradient: 'from-green-500/20 to-emerald-500/20',
   },
   {
     title: 'Instant link sharing',
     description: 'Share product links with one click',
-    icon: '🔗',
+    icon: 'link',
     gradient: 'from-purple-500/20 to-pink-500/20',
   },
 ];
@@ -173,41 +173,41 @@ export const LANDING_FAQ_ITEMS = [
 ];
 
 export const LANDING_CATEGORIES = [
-  { name: 'Fashion', count: 180, icon: '👗' },
-  { name: 'Beauty & Wellness', count: 120, icon: '💄' },
-  { name: 'Home Decor', count: 130, icon: '🏠' },
-  { name: 'Lifestyle', count: 50, icon: '✨' },
-  { name: 'Travel', count: 100, icon: '✈️' },
+  { name: 'Fashion', count: 180, icon: 'dress' },
+  { name: 'Beauty & Wellness', count: 120, icon: 'paint' },
+  { name: 'Home Decor', count: 130, icon: 'home' },
+  { name: 'Lifestyle', count: 50, icon: 'sparkles' },
+  { name: 'Travel', count: 100, icon: 'plane' },
 ];
 
 export const LANDING_FEATURES = [
   {
-    icon: '🔗',
+    icon: 'link',
     title: 'Smart Affiliate Links',
     description: 'Generate trackable links for any product. Share once, earn forever with our intelligent attribution system.',
   },
   {
-    icon: '🤖',
+    icon: 'robot',
     title: 'Auto-DM Magic',
     description: 'Set up keyword triggers and let our AI respond to DMs instantly with your product links.',
   },
   {
-    icon: '📊',
+    icon: 'chart',
     title: 'Real-Time Analytics',
     description: 'Track every click, conversion, and commission in real-time. Know exactly what\'s working.',
   },
   {
-    icon: '💰',
+    icon: 'wallet',
     title: 'Instant Payouts',
     description: 'Get paid weekly via UPI or bank transfer. No minimum threshold, no waiting around.',
   },
   {
-    icon: '🛍️',
+    icon: 'shopping-bag',
     title: 'Personal Storefront',
     description: 'Your own branded store page showcasing all your recommended products in one place.',
   },
   {
-    icon: '🤝',
+    icon: 'handshake',
     title: 'Brand Collaborations',
     description: 'Get discovered by top brands looking for creators like you. Exclusive deals, higher commissions.',
   },
@@ -266,7 +266,7 @@ export const ROLE_OPTIONS = [
     id: 'influencer' as const,
     title: 'Influencer / Creator',
     description: 'Monetize your content, partner with brands, and grow your earnings from Day 1',
-    icon: '🎯',
+    icon: 'target',
     gradient: 'from-purple-500/20 to-pink-500/20',
     borderColor: 'hover:border-purple-500/50',
     features: [
@@ -280,7 +280,7 @@ export const ROLE_OPTIONS = [
     id: 'brand' as const,
     title: 'Brand / Business',
     description: 'Find the right creators, launch campaigns, and scale your sales',
-    icon: '🏢',
+    icon: 'building',
     gradient: 'from-blue-500/20 to-cyan-500/20',
     borderColor: 'hover:border-blue-500/50',
     features: [
@@ -294,7 +294,7 @@ export const ROLE_OPTIONS = [
     id: 'admin' as const,
     title: 'Admin',
     description: 'Control, scale, and protect the platform with full administrative access',
-    icon: '⚙️',
+    icon: 'cog',
     gradient: 'from-orange-500/20 to-red-500/20',
     borderColor: 'hover:border-orange-500/50',
     features: [
@@ -311,25 +311,25 @@ export const ROLE_OPTIONS = [
 // ============================================
 
 export const HELP_CENTER_ITEMS = [
-  { title: 'Getting Started', desc: 'Learn the basics', icon: '🚀' },
-  { title: 'Creating Content', desc: 'Maximize earnings', icon: '📝' },
-  { title: 'Payments FAQ', desc: 'Payout questions', icon: '💳' },
-  { title: 'Auto-Messaging', desc: 'Setup guide', icon: '💬' },
-  { title: 'Campaigns', desc: 'Collaboration rules', icon: '📋' },
-  { title: 'Integrations', desc: 'Connect platforms', icon: '🔌' },
+  { title: 'Getting Started', desc: 'Learn the basics', icon: 'rocket' },
+  { title: 'Creating Content', desc: 'Maximize earnings', icon: 'document' },
+  { title: 'Payments FAQ', desc: 'Payout questions', icon: 'credit-card' },
+  { title: 'Auto-Messaging', desc: 'Setup guide', icon: 'chat' },
+  { title: 'Campaigns', desc: 'Collaboration rules', icon: 'clipboard' },
+  { title: 'Integrations', desc: 'Connect platforms', icon: 'plug' },
 ];
 
 export const BRAND_HELP_ITEMS = [
-  { title: 'Brand Guidelines', desc: 'Platform rules', icon: '📋' },
-  { title: 'Campaign Help', desc: 'Creating campaigns', icon: '📢' },
-  { title: 'Payment Support', desc: 'Billing queries', icon: '💳' },
+  { title: 'Brand Guidelines', desc: 'Platform rules', icon: 'clipboard' },
+  { title: 'Campaign Help', desc: 'Creating campaigns', icon: 'megaphone' },
+  { title: 'Payment Support', desc: 'Billing queries', icon: 'credit-card' },
 ];
 
 export const HELP_RESOURCES = [
-  { title: 'Getting Started Guide', description: 'Learn the basics of setting up your store', icon: '📚' },
-  { title: 'Video Tutorials', description: 'Watch step-by-step guides', icon: '🎥' },
-  { title: 'API Documentation', description: 'Integrate with our API', icon: '💻' },
-  { title: 'Community Forum', description: 'Connect with other sellers', icon: '💬' },
+  { title: 'Getting Started Guide', description: 'Learn the basics of setting up your store', icon: 'book' },
+  { title: 'Video Tutorials', description: 'Watch step-by-step guides', icon: 'video' },
+  { title: 'API Documentation', description: 'Integrate with our API', icon: 'code' },
+  { title: 'Community Forum', description: 'Connect with other sellers', icon: 'chat' },
 ];
 
 export const COMMON_FAQS = [
@@ -352,12 +352,12 @@ export const SUPPORT_CATEGORIES = [
 // ============================================
 
 export const PRODUCT_CATEGORIES = [
-  { id: 1, name: 'Apparel', products: 45, revenue: '₹12,450', icon: '👕' },
-  { id: 2, name: 'Accessories', products: 28, revenue: '₹5,230', icon: '🎒' },
-  { id: 3, name: 'Collectibles', products: 34, revenue: '₹8,120', icon: '🏆' },
-  { id: 4, name: 'Music', products: 12, revenue: '₹3,890', icon: '🎵' },
-  { id: 5, name: 'Art & Prints', products: 19, revenue: '₹2,340', icon: '🎨' },
-  { id: 6, name: 'Home & Living', products: 8, revenue: '₹1,560', icon: '🏠' },
+  { id: 1, name: 'Apparel', products: 45, revenue: '₹12,450', icon: 'shirt' },
+  { id: 2, name: 'Accessories', products: 28, revenue: '₹5,230', icon: 'backpack' },
+  { id: 3, name: 'Collectibles', products: 34, revenue: '₹8,120', icon: 'trophy' },
+  { id: 4, name: 'Music', products: 12, revenue: '₹3,890', icon: 'music' },
+  { id: 5, name: 'Art & Prints', products: 19, revenue: '₹2,340', icon: 'paint' },
+  { id: 6, name: 'Home & Living', products: 8, revenue: '₹1,560', icon: 'home' },
 ];
 
 export const CATEGORY_OPTIONS = [
@@ -381,10 +381,10 @@ export const BRAND_CATEGORY_OPTIONS = [
 // ============================================
 
 export const SOCIAL_PLATFORMS = [
-  { id: 'instagram', name: 'Instagram', icon: '📸' },
-  { id: 'youtube', name: 'YouTube', icon: '📺' },
-  { id: 'tiktok', name: 'TikTok', icon: '🎵' },
-  { id: 'twitter', name: 'Twitter', icon: '🐦' },
+  { id: 'instagram', name: 'Instagram', icon: 'camera' },
+  { id: 'youtube', name: 'YouTube', icon: 'play' },
+  { id: 'tiktok', name: 'TikTok', icon: 'music' },
+  { id: 'twitter', name: 'Twitter', icon: 'chat' },
 ];
 
 // ============================================
@@ -411,10 +411,10 @@ export const INFLUENCER_NICHE_OPTIONS = [
 // ============================================
 
 export const PAYMENT_METHODS = [
-  { id: 'card', name: 'Credit/Debit Card', icon: '💳', desc: 'Visa, Mastercard, RuPay' },
-  { id: 'upi', name: 'UPI', icon: '📱', desc: 'GPay, PhonePe, Paytm' },
-  { id: 'netbanking', name: 'Net Banking', icon: '🏦', desc: 'All major banks' },
-  { id: 'wallet', name: 'Wallet', icon: '👛', desc: 'Paytm, Amazon Pay' },
+  { id: 'card', name: 'Credit/Debit Card', icon: 'credit-card', desc: 'Visa, Mastercard, RuPay' },
+  { id: 'upi', name: 'UPI', icon: 'phone', desc: 'GPay, PhonePe, Paytm' },
+  { id: 'netbanking', name: 'Net Banking', icon: 'bank', desc: 'All major banks' },
+  { id: 'wallet', name: 'Wallet', icon: 'wallet', desc: 'Paytm, Amazon Pay' },
 ];
 
 export const QUICK_AMOUNT_OPTIONS = [10000, 25000, 50000, 100000];
@@ -424,9 +424,9 @@ export const QUICK_AMOUNT_OPTIONS = [10000, 25000, 50000, 100000];
 // ============================================
 
 export const SYSTEM_SERVICES = [
-  { name: 'Message Queue', status: 'Running', processed: '45,678/day', icon: '📤' },
-  { name: 'Payment Processor', status: 'Running', processed: '234 txns/day', icon: '💳' },
-  { name: 'Analytics Pipeline', status: 'Running', processed: '1.2M events/day', icon: '📊' },
+  { name: 'Message Queue', status: 'Running', processed: '45,678/day', icon: 'send' },
+  { name: 'Payment Processor', status: 'Running', processed: '234 txns/day', icon: 'credit-card' },
+  { name: 'Analytics Pipeline', status: 'Running', processed: '1.2M events/day', icon: 'chart' },
 ];
 
 export const REVENUE_CATEGORIES = [

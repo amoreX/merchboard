@@ -21,6 +21,7 @@ import {
   DashboardHeader,
   NotificationBell,
   PageContainer,
+  Icon,
 } from '@/components/ui';
 import { AdminUser, AdminProduct, AdminCampaign, Payout } from '@/types';
 import {
@@ -101,10 +102,10 @@ function OverviewTab() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total GMV" value={`₹${(platformStats.totalGMV / 10000000).toFixed(1)}Cr`} change="+23.5%" icon="💰" />
-        <StatCard label="Active Creators" value={platformStats.activeCreators.toLocaleString()} change="+156" icon="⭐" />
-        <StatCard label="Active Brands" value={platformStats.activeBrands.toString()} change="+12" icon="🏢" />
-        <StatCard label="Platform Revenue" value={`₹${(platformStats.platformRevenue / 100000).toFixed(0)}L`} change="+18.2%" icon="📈" />
+        <StatCard label="Total GMV" value={`₹${(platformStats.totalGMV / 10000000).toFixed(1)}Cr`} change="+23.5%" icon="wallet" />
+        <StatCard label="Active Creators" value={platformStats.activeCreators.toLocaleString()} change="+156" icon="star" />
+        <StatCard label="Active Brands" value={platformStats.activeBrands.toString()} change="+12" icon="building" />
+        <StatCard label="Platform Revenue" value={`₹${(platformStats.platformRevenue / 100000).toFixed(0)}L`} change="+18.2%" icon="trending-up" />
       </div>
 
       {/* Alerts */}
@@ -118,13 +119,15 @@ function OverviewTab() {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: 'Pending Approvals', value: pendingApprovals, icon: '📋', color: 'yellow' },
-          { label: 'Active Campaigns', value: campaigns.filter(c => c.status === 'active').length, icon: '📢', color: 'green' },
-          { label: 'Open Reports', value: pendingReports, icon: '🎫', color: 'blue' },
-          { label: 'Suspended Users', value: users.filter(u => u.status === 'suspended').length, icon: '🚫', color: 'red' },
+          { label: 'Pending Approvals', value: pendingApprovals, icon: 'clipboard', color: 'yellow' },
+          { label: 'Active Campaigns', value: campaigns.filter(c => c.status === 'active').length, icon: 'megaphone', color: 'green' },
+          { label: 'Open Reports', value: pendingReports, icon: 'document', color: 'blue' },
+          { label: 'Suspended Users', value: users.filter(u => u.status === 'suspended').length, icon: 'shield', color: 'red' },
         ].map((item, i) => (
           <Card key={i} hover className="cursor-pointer">
-            <span className="text-3xl mb-2 block">{item.icon}</span>
+            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent mb-2">
+              <Icon name={item.icon} size={20} />
+            </div>
             <p className="text-3xl font-bold text-accent">{item.value}</p>
             <p className="text-sm text-foreground/60">{item.label}</p>
           </Card>
@@ -136,13 +139,13 @@ function OverviewTab() {
         <Card>
           <h3 className="font-semibold mb-4">Platform Growth</h3>
           <div className="h-48 flex items-center justify-center text-foreground/40 border border-dashed border-border rounded-lg">
-            📊 Growth chart
+            <Icon name="chart" size={24} className="inline mr-2" /> Growth chart
           </div>
         </Card>
         <Card>
           <h3 className="font-semibold mb-4">Revenue Breakdown</h3>
           <div className="h-48 flex items-center justify-center text-foreground/40 border border-dashed border-border rounded-lg">
-            📈 Revenue chart
+            <Icon name="trending-up" size={24} className="inline mr-2" /> Revenue chart
           </div>
         </Card>
       </div>
@@ -240,10 +243,10 @@ function UsersTab() {
     <div className="space-y-6">
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard label="Total Users" value={users.length.toString()} icon="👥" />
-        <StatCard label="Influencers" value={users.filter(u => u.type === 'influencer').length.toString()} icon="⭐" />
-        <StatCard label="Brands" value={users.filter(u => u.type === 'brand').length.toString()} icon="🏢" />
-        <StatCard label="Suspended" value={users.filter(u => u.status === 'suspended').length.toString()} icon="🚫" />
+        <StatCard label="Total Users" value={users.length.toString()} icon="users" />
+        <StatCard label="Influencers" value={users.filter(u => u.type === 'influencer').length.toString()} icon="star" />
+        <StatCard label="Brands" value={users.filter(u => u.type === 'brand').length.toString()} icon="building" />
+        <StatCard label="Suspended" value={users.filter(u => u.status === 'suspended').length.toString()} icon="shield" />
       </div>
 
       {/* Filters */}
@@ -347,10 +350,10 @@ function ProductsTab() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard label="Total Products" value={products.length.toString()} icon="📦" />
-        <StatCard label="Pending" value={products.filter(p => p.status === 'pending').length.toString()} icon="⏳" />
-        <StatCard label="Approved" value={products.filter(p => p.status === 'approved').length.toString()} icon="✅" />
-        <StatCard label="Reported" value={products.filter(p => p.reports > 0).length.toString()} icon="🚩" />
+        <StatCard label="Total Products" value={products.length.toString()} icon="box" />
+        <StatCard label="Pending" value={products.filter(p => p.status === 'pending').length.toString()} icon="clock" />
+        <StatCard label="Approved" value={products.filter(p => p.status === 'approved').length.toString()} icon="check-circle" />
+        <StatCard label="Reported" value={products.filter(p => p.reports > 0).length.toString()} icon="shield" />
       </div>
 
       <Tabs
@@ -428,10 +431,10 @@ function CampaignsTab() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard label="Total Campaigns" value={campaigns.length.toString()} icon="📢" />
-        <StatCard label="Active" value={campaigns.filter(c => c.status === 'active').length.toString()} icon="▶️" />
-        <StatCard label="Pending" value={campaigns.filter(c => c.status === 'pending').length.toString()} icon="⏳" />
-        <StatCard label="Total Budget" value={`₹${campaigns.reduce((s, c) => s + c.budget, 0).toLocaleString()}`} icon="💰" />
+        <StatCard label="Total Campaigns" value={campaigns.length.toString()} icon="megaphone" />
+        <StatCard label="Active" value={campaigns.filter(c => c.status === 'active').length.toString()} icon="play-circle" />
+        <StatCard label="Pending" value={campaigns.filter(c => c.status === 'pending').length.toString()} icon="clock" />
+        <StatCard label="Total Budget" value={`₹${campaigns.reduce((s, c) => s + c.budget, 0).toLocaleString()}`} icon="wallet" />
       </div>
 
       <Table columns={columns} data={campaigns} keyExtractor={(c) => c.id} />
@@ -464,10 +467,10 @@ function MessagingTab() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard label="Messages Today" value={platformStats.messagesDelivered.toLocaleString()} icon="📤" />
-        <StatCard label="Delivery Rate" value={`${platformStats.messageDeliveryRate}%`} icon="✅" />
-        <StatCard label="Queue Size" value="1,234" icon="📋" />
-        <StatCard label="Failed" value="12" icon="❌" />
+        <StatCard label="Messages Today" value={platformStats.messagesDelivered.toLocaleString()} icon="send" />
+        <StatCard label="Delivery Rate" value={`${platformStats.messageDeliveryRate}%`} icon="check-circle" />
+        <StatCard label="Queue Size" value="1,234" icon="clipboard" />
+        <StatCard label="Failed" value="12" icon="x-mark" />
       </div>
 
       {/* Message Rules */}
@@ -531,10 +534,10 @@ function AnalyticsTab() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard label="Total GMV" value={`₹${(platformStats.totalGMV / 10000000).toFixed(1)}Cr`} change="+23.5%" icon="💰" />
-        <StatCard label="Active Creators" value={platformStats.activeCreators.toLocaleString()} change="+12%" icon="⭐" />
-        <StatCard label="Active Brands" value={platformStats.activeBrands.toString()} change="+8%" icon="🏢" />
-        <StatCard label="Platform Revenue" value={`₹${(platformStats.platformRevenue / 100000).toFixed(0)}L`} change="+18%" icon="📈" />
+        <StatCard label="Total GMV" value={`₹${(platformStats.totalGMV / 10000000).toFixed(1)}Cr`} change="+23.5%" icon="wallet" />
+        <StatCard label="Active Creators" value={platformStats.activeCreators.toLocaleString()} change="+12%" icon="star" />
+        <StatCard label="Active Brands" value={platformStats.activeBrands.toString()} change="+8%" icon="building" />
+        <StatCard label="Platform Revenue" value={`₹${(platformStats.platformRevenue / 100000).toFixed(0)}L`} change="+18%" icon="trending-up" />
       </div>
 
       {/* Charts */}
@@ -587,10 +590,10 @@ function PaymentsTab() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard label="Total Payouts" value={`₹${(platformStats.totalPayouts / 100000).toFixed(0)}L`} icon="💸" />
-        <StatCard label="Pending Payouts" value={`₹${(platformStats.pendingPayouts / 100000).toFixed(1)}L`} icon="⏳" />
-        <StatCard label="Platform Revenue" value={`₹${(platformStats.platformRevenue / 100000).toFixed(0)}L`} icon="💰" />
-        <StatCard label="Commission Rate" value="2.5%" icon="📊" />
+        <StatCard label="Total Payouts" value={`₹${(platformStats.totalPayouts / 100000).toFixed(0)}L`} icon="credit-card" />
+        <StatCard label="Pending Payouts" value={`₹${(platformStats.pendingPayouts / 100000).toFixed(1)}L`} icon="clock" />
+        <StatCard label="Platform Revenue" value={`₹${(platformStats.platformRevenue / 100000).toFixed(0)}L`} icon="wallet" />
+        <StatCard label="Commission Rate" value="2.5%" icon="chart" />
       </div>
 
       {/* Pending Payouts */}
@@ -629,12 +632,12 @@ function PaymentsTab() {
             ))}
           </div>
         ) : (
-          <EmptyState icon="✅" title="No pending payouts" description="All payouts have been processed" />
+          <EmptyState icon="check-circle" title="No pending payouts" description="All payouts have been processed" />
         )}
       </Card>
 
       {/* Fraud Detection */}
-      <Alert type="warning" title="🚨 Fraud Detection">
+      <Alert type="warning" title="Fraud Detection">
         <p>Suspicious activity monitoring is active. 2 alerts in the last 24 hours.</p>
       </Alert>
     </div>
@@ -660,10 +663,10 @@ function ModerationTab() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard label="Total Reports" value={reports.length.toString()} icon="🚩" />
-        <StatCard label="Pending" value={reports.filter(r => r.status === 'pending').length.toString()} icon="📋" />
-        <StatCard label="Investigating" value={reports.filter(r => r.status === 'investigating').length.toString()} icon="🔍" />
-        <StatCard label="Resolved" value={reports.filter(r => r.status === 'resolved').length.toString()} icon="✅" />
+        <StatCard label="Total Reports" value={reports.length.toString()} icon="document" />
+        <StatCard label="Pending" value={reports.filter(r => r.status === 'pending').length.toString()} icon="clipboard" />
+        <StatCard label="Investigating" value={reports.filter(r => r.status === 'investigating').length.toString()} icon="target" />
+        <StatCard label="Resolved" value={reports.filter(r => r.status === 'resolved').length.toString()} icon="check-circle" />
       </div>
 
       <Card>
@@ -705,7 +708,7 @@ function ModerationTab() {
             ))}
           </div>
         ) : (
-          <EmptyState icon="🎉" title="No reports" description="Everything looks clean!" />
+          <EmptyState icon="sparkles" title="No reports" description="Everything looks clean!" />
         )}
       </Card>
 
@@ -730,10 +733,10 @@ function SystemTab() {
     <div className="space-y-6">
       {/* System Health */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard label="API Uptime" value="99.9%" icon="🟢" />
-        <StatCard label="Response Time" value="45ms" icon="⚡" />
-        <StatCard label="Error Rate" value="0.1%" icon="✅" />
-        <StatCard label="Active Sessions" value="2,345" icon="👥" />
+        <StatCard label="API Uptime" value="99.9%" icon="cog" />
+        <StatCard label="Response Time" value="45ms" icon="bolt" />
+        <StatCard label="Error Rate" value="0.1%" icon="check-circle" />
+        <StatCard label="Active Sessions" value="2,345" icon="users" />
       </div>
 
       {/* Feature Toggles */}

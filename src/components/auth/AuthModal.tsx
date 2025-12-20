@@ -90,16 +90,19 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/80 backdrop-blur-md"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-md bg-card border border-border rounded-2xl p-8 animate-scale-in">
+      <div className="relative w-full max-w-md bg-gradient-to-br from-card to-card/95 border border-border/80 rounded-2xl p-8 animate-scale-in shadow-2xl">
+        {/* Decorative gradient */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 rounded-t-2xl" />
+        
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-border/50 transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-border/50 transition-colors text-foreground/60 hover:text-foreground"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -107,9 +110,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         </button>
 
         {/* Logo */}
-        <div className="flex items-center gap-2 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
-            <span className="text-background font-bold text-lg">M</span>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center shadow-lg shadow-orange-500/20">
+            <span className="text-white font-bold text-xl">M</span>
           </div>
           <span className="font-bold text-xl tracking-tight">Merch Nest</span>
         </div>
@@ -205,7 +208,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 bg-accent hover:bg-accent-hover text-background font-semibold rounded-xl transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
@@ -240,13 +243,25 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         {/* Password requirements hint */}
         {mode === 'signup' && (
-          <div className="mt-4 p-3 bg-accent/10 rounded-lg text-xs text-foreground/60">
-            <p className="font-medium text-foreground/80 mb-1">Password requirements:</p>
-            <ul className="list-disc list-inside space-y-0.5">
-              <li>At least 8 characters</li>
-              <li>One uppercase letter</li>
-              <li>One lowercase letter</li>
-              <li>One number</li>
+          <div className="mt-4 p-4 bg-gradient-to-r from-orange-500/10 to-pink-500/10 rounded-xl text-xs text-foreground/60 border border-orange-500/20">
+            <p className="font-medium text-foreground/80 mb-2">Password requirements:</p>
+            <ul className="space-y-1">
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                At least 8 characters
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                One uppercase letter
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                One lowercase letter
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                One number
+              </li>
             </ul>
           </div>
         )}

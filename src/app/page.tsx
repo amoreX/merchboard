@@ -2,117 +2,18 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-
-// Creator data for the marquee
-const creators = [
-  { name: "Malvika Sitlani", handle: "@malvikasitlani", followers: "707K", platform: "Instagram" },
-  { name: "Aditi Shreshtha", handle: "@thatquirkymissaditi", followers: "1M", platform: "YouTube" },
-  { name: "Simran Balarjain", handle: "@simranbalarjain", followers: "1M", platform: "Instagram" },
-  { name: "Kritika Khurana", handle: "@thatbohogirll", followers: "2M", platform: "Instagram" },
-  { name: "Anushka Hazra", handle: "@anushkahazraa", followers: "569K", platform: "Instagram" },
-  { name: "Zuola", handle: "@zuola", followers: "201K", platform: "Instagram" },
-  { name: "Kinnari Jain", handle: "@thepearshapedstylist", followers: "591K", platform: "Instagram" },
-  { name: "Suman Kothari", handle: "@lifestylediaryy", followers: "473K", platform: "Instagram" },
-];
-
-const brands = ["Nykaa", "Myntra", "AJIO", "Flipkart", "H&M", "Urbanic", "Meesho", "Snitch", "Libas", "Foxtale"];
-
-const features = [
-  {
-    title: "Monetize 100% of your content",
-    description: "Earn commissions on every post with huge rewards",
-    icon: "💰",
-    gradient: "from-yellow-500/20 to-orange-500/20",
-  },
-  {
-    title: "Connect with 250+ Brands",
-    description: "Partner with leading brands for collaborations",
-    icon: "🤝",
-    gradient: "from-blue-500/20 to-cyan-500/20",
-  },
-  {
-    title: "Boost your influence",
-    description: "Grow your followers and engagement",
-    icon: "📈",
-    gradient: "from-green-500/20 to-emerald-500/20",
-  },
-  {
-    title: "Instant link sharing",
-    description: "Share product links with one click",
-    icon: "🔗",
-    gradient: "from-purple-500/20 to-pink-500/20",
-  },
-];
-
-const steps = [
-  {
-    number: "01",
-    title: "Sign up on Merch Nest",
-    description: "Complete the signup process and create your Merch Nest account",
-  },
-  {
-    number: "02",
-    title: "Link your social media",
-    description: "Connect your Instagram, YouTube, or TikTok account",
-  },
-  {
-    number: "03",
-    title: "Kickstart your earnings",
-    description: "Create your first post, share the link with your audience and begin your earning spree",
-  },
-];
-
-const testimonials = [
-  {
-    name: "Sana Grover",
-    handle: "@sanagrover",
-    followers: "505K",
-    quote: "I've been on YouTube for the last 07 years and always wished that there was a platform like Merch Nest. It is truly revolutionary as it makes it incredibly simple to share product links in my videos and Instagram DMs.",
-  },
-  {
-    name: "Vaibhav Keswani",
-    handle: "@pehenawah",
-    followers: "625K",
-    quote: "Merch Nest has been a game-changer for me as it has opened up a sustainable source of income that perfectly complements my YouTube and Instagram. The seamless way of sharing product links has saved me countless hours.",
-  },
-  {
-    name: "Naveli Khatri",
-    handle: "@navelikhatri",
-    followers: "206K",
-    quote: "Merch Nest has revolutionized my content creation! As a fashion content Creator, I'm now earning 2-3L monthly by sharing product links on Instagram stories and posts. Monetizing 100% of my content has never been easier.",
-  },
-];
-
-const faqs = [
-  {
-    question: "How does the Merch Nest Creator payout process work?",
-    answer: "Creator payout in a month will include all the commissions that get confirmed by the brand in that month and any earnings via rewards and referral program. Payments are processed on the last day of the month and will be in your bank account shortly after.",
-  },
-  {
-    question: "How does Merch Nest help Creators grow?",
-    answer: "Struggling with creative block or unsure about profitable content? The Merch Nest Creator Success Team guides you through content strategies to fuel your growth and maximize earnings.",
-  },
-  {
-    question: "Will Brands control my content?",
-    answer: "No deadlines or content demands. You're the boss of your own creative journey.",
-  },
-  {
-    question: "Do Merch Nest Creators receive exclusive Brand information?",
-    answer: "Yes, get early alerts on upcoming sales, topical days & more to plan your content better and enhance your revenue.",
-  },
-  {
-    question: "Can Merch Nest's brand commissions surpass my current collab earnings?",
-    answer: "Yes, Merch Nest offers a stable, recurring income stream that can complement and even surpass your existing brand collaborations.",
-  },
-];
-
-const categories = [
-  { name: "Fashion", count: 180, icon: "👗" },
-  { name: "Beauty & Wellness", count: 120, icon: "💄" },
-  { name: "Home Decor", count: 130, icon: "🏠" },
-  { name: "Lifestyle", count: 50, icon: "✨" },
-  { name: "Travel", count: 100, icon: "✈️" },
-];
+import { useRouter } from "next/navigation";
+import AuthModal from "@/components/auth/AuthModal";
+import { useAuthStore } from "@/store/authStore";
+import {
+  LANDING_CREATORS as creators,
+  LANDING_BRANDS as brands,
+  LANDING_FEATURE_CARDS as features,
+  LANDING_STEPS as steps,
+  LANDING_TESTIMONIAL_CARDS as testimonials,
+  LANDING_FAQ_ITEMS as faqs,
+  LANDING_CATEGORIES as categories,
+} from "@/constants";
 
 // Hook for detecting when element is in viewport
 function useInView(threshold = 0.1) {
@@ -166,6 +67,23 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const router = useRouter();
+  const { user, isAuthenticated, isSelectingRole } = useAuthStore();
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (isAuthenticated && user?.role) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, user, router]);
+
+  // Handle role selection redirect
+  useEffect(() => {
+    if (isSelectingRole) {
+      router.push('/dashboard');
+    }
+  }, [isSelectingRole, router]);
 
   // Handle navbar background on scroll
   useEffect(() => {
@@ -185,6 +103,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
+      {/* Auth Modal */}
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+
       {/* Navigation */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled ? "bg-background/95 backdrop-blur-lg border-b border-border shadow-lg" : "bg-transparent"
@@ -204,12 +125,12 @@ export default function Home() {
               <a href="#features" className="text-foreground/70 hover:text-accent transition-colors underline-animation">Features</a>
               <a href="#how-it-works" className="text-foreground/70 hover:text-accent transition-colors underline-animation">How It Works</a>
               <a href="#testimonials" className="text-foreground/70 hover:text-accent transition-colors underline-animation">Testimonials</a>
-              <Link
-                href="/dashboard"
+              <button
+                onClick={() => setAuthModalOpen(true)}
                 className="px-6 py-2.5 bg-accent text-background rounded-full font-medium hover:bg-accent-hover transition-all hover:scale-105 hover:shadow-lg hover:shadow-accent/25"
               >
-                Dashboard
-              </Link>
+                Login / Sign Up
+              </button>
             </div>
 
             {/* Mobile Menu Button */}
@@ -229,9 +150,12 @@ export default function Home() {
               <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block text-foreground/70 hover:text-foreground py-2 px-3 rounded-lg hover:bg-border/30 transition-colors">Features</a>
               <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="block text-foreground/70 hover:text-foreground py-2 px-3 rounded-lg hover:bg-border/30 transition-colors">How It Works</a>
               <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="block text-foreground/70 hover:text-foreground py-2 px-3 rounded-lg hover:bg-border/30 transition-colors">Testimonials</a>
-              <Link href="/dashboard" className="block w-full text-center px-6 py-3 bg-accent text-background rounded-full font-medium mt-2">
-                Dashboard
-              </Link>
+              <button 
+                onClick={() => { setMobileMenuOpen(false); setAuthModalOpen(true); }} 
+                className="block w-full text-center px-6 py-3 bg-accent text-background rounded-full font-medium mt-2"
+              >
+                Login / Sign Up
+              </button>
             </div>
           </div>
         </div>
@@ -277,15 +201,15 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4" style={{ animationDelay: "0.4s" }}>
-              <Link
-                href="/dashboard"
+              <button
+                onClick={() => setAuthModalOpen(true)}
                 className="group btn-glow w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-accent hover:bg-accent-hover text-background font-semibold rounded-full text-base sm:text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
               >
                 Join Merch Nest
                 <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
-              </Link>
+              </button>
               <a
                 href="#how-it-works"
                 className="group w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 border border-border hover:border-accent/50 text-foreground/80 hover:text-foreground rounded-full text-base sm:text-lg transition-all flex items-center justify-center gap-2 hover:bg-accent/5"
@@ -469,15 +393,15 @@ export default function Home() {
           </div>
 
           <div className={`text-center mt-10 sm:mt-12 px-4 ${stepsRef.isInView ? "animate-fade-in-up" : "opacity-0"}`} style={{ animationDelay: "0.6s" }}>
-            <Link
-              href="/dashboard"
+            <button
+              onClick={() => setAuthModalOpen(true)}
               className="group inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-accent hover:bg-accent-hover text-background font-semibold rounded-full text-base sm:text-lg transition-all hover:scale-105 hover:shadow-lg hover:shadow-accent/25"
             >
               Get Started Now
               <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-            </Link>
+            </button>
           </div>
         </div>
       </section>
@@ -570,15 +494,15 @@ export default function Home() {
           <p className="text-foreground/60 mb-8 sm:mb-10 max-w-2xl mx-auto text-base sm:text-lg px-2">
             Help your followers shop smarter with great product recommendations and earn when they shop from your content.
           </p>
-          <Link
-            href="/dashboard"
+          <button
+            onClick={() => setAuthModalOpen(true)}
             className="group inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-10 py-4 sm:py-5 bg-accent hover:bg-accent-hover text-background font-bold rounded-full text-base sm:text-xl transition-all transform hover:scale-105 animate-pulse-glow"
           >
             Start Your Journey
             <svg className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
-          </Link>
+          </button>
         </div>
       </section>
 

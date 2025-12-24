@@ -61,6 +61,7 @@ export const useAuthStore = create<AuthState>()(
           localStorage.removeItem('merchboard-influencer');
           localStorage.removeItem('merchboard-brand');
           localStorage.removeItem('merchboard-admin');
+          localStorage.removeItem('merchboard-products');
         }
         set({
           user: null,

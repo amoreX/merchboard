@@ -269,7 +269,7 @@ export function StatCard({
 interface BadgeProps {
   children: ReactNode;
   variant?: 'default' | 'success' | 'warning' | 'error' | 'info' | 'accent';
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export function Badge({
@@ -289,6 +289,7 @@ export function Badge({
   const sizes = {
     sm: 'px-2.5 py-0.5 text-xs',
     md: 'px-3 py-1 text-sm',
+    lg: 'px-4 py-1.5 text-sm',
   };
 
   return (

@@ -28,30 +28,41 @@ import {
 // Navigation & Tab Configurations
 // ============================================
 
-export type InfluencerTab = 'overview' | 'profile' | 'products' | 'campaigns' | 'messaging' | 'analytics' | 'payments' | 'support';
-export type BrandTab = 'overview' | 'profile' | 'products' | 'campaigns' | 'influencers' | 'performance' | 'payments' | 'support';
+export type InfluencerTab = 'overview' | 'profile' | 'discover' | 'my-products' | 'skipped';
+export type BrandTab = 'overview' | 'profile' | 'products';
 export type AdminTab = 'overview' | 'users' | 'products' | 'campaigns' | 'messaging' | 'analytics' | 'payments' | 'moderation' | 'system';
 
 export const INFLUENCER_TABS: { id: InfluencerTab; label: string; icon: string }[] = [
   { id: 'overview', label: 'Overview', icon: 'dashboard' },
-  { id: 'profile', label: 'Profile & Store', icon: 'user' },
-  { id: 'products', label: 'Products', icon: 'shopping-bag' },
-  { id: 'campaigns', label: 'Campaigns', icon: 'megaphone' },
-  { id: 'messaging', label: 'Auto-Messaging', icon: 'chat' },
-  { id: 'analytics', label: 'Analytics', icon: 'chart' },
-  { id: 'payments', label: 'Payments', icon: 'wallet' },
-  { id: 'support', label: 'Support', icon: 'help' },
+  { id: 'profile', label: 'Profile', icon: 'user' },
+  { id: 'discover', label: 'Discover Products', icon: 'search' },
+  { id: 'my-products', label: 'My Products', icon: 'shopping-bag' },
+  { id: 'skipped', label: 'Skipped', icon: 'x-circle' },
 ];
 
 export const BRAND_TABS: { id: BrandTab; label: string; icon: string }[] = [
   { id: 'overview', label: 'Overview', icon: 'dashboard' },
   { id: 'profile', label: 'Brand Profile', icon: 'building' },
   { id: 'products', label: 'Products', icon: 'box' },
-  { id: 'campaigns', label: 'Campaigns', icon: 'megaphone' },
-  { id: 'influencers', label: 'Influencers', icon: 'star' },
-  { id: 'performance', label: 'Performance', icon: 'chart' },
-  { id: 'payments', label: 'Payments', icon: 'credit-card' },
-  { id: 'support', label: 'Support', icon: 'help' },
+];
+
+// ============================================
+// Niche/Category Options (Shared)
+// ============================================
+
+export const NICHE_OPTIONS = [
+  { value: 'fashion-style', label: 'Fashion & Style' },
+  { value: 'beauty-skincare', label: 'Beauty & Skincare' },
+  { value: 'fitness-health', label: 'Fitness & Health' },
+  { value: 'technology-gadgets', label: 'Technology & Gadgets' },
+  { value: 'food-cooking', label: 'Food & Cooking' },
+  { value: 'travel-lifestyle', label: 'Travel & Lifestyle' },
+  { value: 'gaming', label: 'Gaming' },
+  { value: 'education', label: 'Education' },
+  { value: 'entertainment', label: 'Entertainment' },
+  { value: 'home-decor', label: 'Home & Decor' },
+  { value: 'parenting-family', label: 'Parenting & Family' },
+  { value: 'finance-business', label: 'Finance & Business' },
 ];
 
 export const ADMIN_TABS: { id: AdminTab; label: string; icon: string }[] = [

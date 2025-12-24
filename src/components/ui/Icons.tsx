@@ -477,6 +477,31 @@ export function IconPlayCircle(props: IconProps) {
   );
 }
 
+export function IconSearch(props: IconProps) {
+  return (
+    <svg {...getProps(props)}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+    </svg>
+  );
+}
+
+export function IconXCircle(props: IconProps) {
+  return (
+    <svg {...getProps(props)}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+    </svg>
+  );
+}
+
+export function IconTag(props: IconProps) {
+  return (
+    <svg {...getProps(props)}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6Z" />
+    </svg>
+  );
+}
+
 export function IconPlane(props: IconProps) {
   return (
     <svg {...getProps(props)}>
@@ -564,6 +589,9 @@ export const IconMap: Record<string, (props: IconProps) => JSX.Element> = {
   info: IconInfo,
   bolt: IconBolt,
   'play-circle': IconPlayCircle,
+  search: IconSearch,
+  'x-circle': IconXCircle,
+  tag: IconTag,
 };
 
 // Dynamic Icon component

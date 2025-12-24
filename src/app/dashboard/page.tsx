@@ -3,7 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
+import { useInfluencerStore } from '@/store/influencerStore';
+import { useBrandStore } from '@/store/brandStore';
 import RoleSelection from '@/components/auth/RoleSelection';
+import InfluencerOnboarding from '@/components/auth/InfluencerOnboarding';
+import BrandOnboarding from '@/components/auth/BrandOnboarding';
 import InfluencerDashboard from '@/components/dashboards/InfluencerDashboard';
 import BrandDashboard from '@/components/dashboards/BrandDashboard';
 import AdminDashboard from '@/components/dashboards/AdminDashboard';
@@ -11,12 +15,25 @@ import AdminDashboard from '@/components/dashboards/AdminDashboard';
 export default function Dashboard() {
   const router = useRouter();
   const { user, isAuthenticated, isSelectingRole } = useAuthStore();
+  const { isOnboarded: influencerOnboarded, initializeProfile: initInfluencer } = useInfluencerStore();
+  const { isOnboarded: brandOnboarded, initializeProfile: initBrand } = useBrandStore();
   const [isHydrated, setIsHydrated] = useState(false);
 
   // Wait for hydration to prevent SSR mismatch
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+
+  // Initialize the appropriate store based on role
+  useEffect(() => {
+    if (isHydrated && isAuthenticated && user?.role) {
+      if (user.role === 'influencer') {
+        initInfluencer(user.email, user.name, user.email);
+      } else if (user.role === 'brand') {
+        initBrand(user.email, user.name, user.email);
+      }
+    }
+  }, [isHydrated, isAuthenticated, user, initInfluencer, initBrand]);
 
   // Redirect to home if not logged in
   useEffect(() => {
@@ -56,6 +73,16 @@ export default function Dashboard() {
         </div>
       </div>
     );
+  }
+
+  // Show onboarding for influencers who haven't completed it
+  if (user.role === 'influencer' && !influencerOnboarded) {
+    return <InfluencerOnboarding />;
+  }
+
+  // Show onboarding for brands who haven't completed it
+  if (user.role === 'brand' && !brandOnboarded) {
+    return <BrandOnboarding />;
   }
 
   // Render the appropriate dashboard based on user role

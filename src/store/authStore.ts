@@ -55,8 +55,9 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
-        // Clear all store data from localStorage
+        // Clear all store data from localStorage including auth
         if (typeof window !== 'undefined') {
+          localStorage.removeItem('merchboard-auth');
           localStorage.removeItem('merchboard-influencer');
           localStorage.removeItem('merchboard-brand');
           localStorage.removeItem('merchboard-admin');

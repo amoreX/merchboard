@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 import { useBrandStore } from '@/store/brandStore';
 import { useProductStore, CatalogProduct } from '@/store/productStore';
@@ -20,8 +21,23 @@ import {
   NotificationBell,
   PageContainer,
   ConfirmDialog,
+  Icon,
 } from '@/components/ui';
 import { BRAND_TABS, BrandTab, NICHE_OPTIONS } from '@/constants';
+
+// Animation variants
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
+};
 
 export default function BrandDashboard() {
   const [activeTab, setActiveTab] = useState<BrandTab>('overview');
@@ -38,7 +54,7 @@ export default function BrandDashboard() {
   const unreadNotifications = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-[#0a0a0a] flex">
       {/* Sidebar */}
       <Sidebar
         tabs={BRAND_TABS}
@@ -62,9 +78,11 @@ export default function BrandDashboard() {
         </DashboardHeader>
 
         <PageContainer>
-          {activeTab === 'overview' && <OverviewTab />}
-          {activeTab === 'profile' && <ProfileTab />}
-          {activeTab === 'products' && <ProductsTab />}
+          <AnimatePresence mode="wait">
+            {activeTab === 'overview' && <OverviewTab key="overview" />}
+            {activeTab === 'profile' && <ProfileTab key="profile" />}
+            {activeTab === 'products' && <ProductsTab key="products" />}
+          </AnimatePresence>
         </PageContainer>
       </main>
     </div>
@@ -85,9 +103,17 @@ function OverviewTab() {
   ) || [];
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+        variants={fadeInUp}
+      >
         <StatCard 
           label="Products Uploaded" 
           value={brandProducts.length.toString()} 
@@ -108,46 +134,57 @@ function OverviewTab() {
           value="All Influencers" 
           icon="users" 
         />
-      </div>
+      </motion.div>
 
       {/* Quick Profile Card */}
-      <Card>
-        <div className="flex items-start gap-6 flex-wrap">
-          <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white text-2xl font-bold">
-            {profile?.companyName?.charAt(0) || 'B'}
-          </div>
-          <div className="flex-1 min-w-[200px]">
-            <h2 className="text-2xl font-bold">{profile?.companyName}</h2>
-            {profile?.website && (
-              <p className="text-foreground/60 mb-3">{profile.website}</p>
-            )}
-            <div className="flex flex-wrap gap-2">
-              {categoryLabels.map((cat, i) => (
-                <Badge key={i} variant="info" size="md">{cat}</Badge>
-              ))}
+      <motion.div variants={fadeInUp}>
+        <Card>
+          <div className="flex items-start gap-6 flex-wrap">
+            <div className="w-20 h-20 rounded-2xl border-2 border-blue-500/50 bg-blue-500/10 flex items-center justify-center text-blue-400 text-2xl font-bold">
+              {profile?.companyName?.charAt(0) || 'B'}
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <h2 className="text-xl font-semibold mb-1">{profile?.companyName}</h2>
+              {profile?.website && (
+                <p className="text-[#888] mb-3">{profile.website}</p>
+              )}
+              <div className="flex flex-wrap gap-2">
+                {categoryLabels.map((cat, i) => (
+                  <Badge key={i} variant="info" size="md">{cat}</Badge>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </motion.div>
 
       {/* Recent Products */}
-      <Card>
-        <h3 className="font-semibold mb-4">Your Products</h3>
-        {brandProducts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {brandProducts.slice(0, 3).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState 
-            icon="box" 
-            title="No products yet" 
-            description="Upload your first product to get started!" 
-          />
-        )}
-      </Card>
-    </div>
+      <motion.div variants={fadeInUp}>
+        <Card>
+          <h3 className="font-semibold mb-4">Your Products</h3>
+          {brandProducts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {brandProducts.slice(0, 3).map((product, index) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <ProductCard product={product} />
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState 
+              icon="box" 
+              title="No products yet" 
+              description="Upload your first product to get started!" 
+            />
+          )}
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -194,31 +231,41 @@ function ProfileTab() {
   ) || [];
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <div className="flex items-start gap-6 flex-wrap">
-          <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white text-3xl font-bold">
-            {profile?.companyName?.charAt(0) || 'B'}
-          </div>
-          <div className="flex-1 min-w-[200px]">
-            <div className="flex items-center gap-3 mb-1">
-              <h2 className="text-2xl font-bold">{profile?.companyName}</h2>
-              {profile?.verified && <Badge variant="success">Verified</Badge>}
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div variants={fadeInUp}>
+        <Card>
+          <div className="flex items-start gap-6 flex-wrap">
+            <div className="w-24 h-24 rounded-2xl border-2 border-blue-500/50 bg-blue-500/10 flex items-center justify-center text-blue-400 text-3xl font-bold">
+              {profile?.companyName?.charAt(0) || 'B'}
             </div>
-            {profile?.website && (
-              <p className="text-foreground/60 mb-4">{profile.website}</p>
-            )}
-            <div className="flex flex-wrap gap-2">
-              {categoryLabels.map((cat, i) => (
-                <Badge key={i} variant="info" size="md">{cat}</Badge>
-              ))}
+            <div className="flex-1 min-w-[200px]">
+              <div className="flex items-center gap-3 mb-1">
+                <h2 className="text-2xl font-semibold">{profile?.companyName}</h2>
+                {profile?.verified && <Badge variant="success">Verified</Badge>}
+              </div>
+              {profile?.website && (
+                <p className="text-[#888] mb-4">{profile.website}</p>
+              )}
+              <div className="flex flex-wrap gap-2">
+                {categoryLabels.map((cat, i) => (
+                  <Badge key={i} variant="info" size="md">{cat}</Badge>
+                ))}
+              </div>
             </div>
+            <Button variant="outline" onClick={() => setEditing(true)}>Edit Profile</Button>
           </div>
-          <Button variant="outline" onClick={() => setEditing(true)}>Edit Profile</Button>
-        </div>
-      </Card>
+        </Card>
+      </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div 
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+        variants={fadeInUp}
+      >
         <Card>
           <h3 className="font-semibold mb-4">Brand Details</h3>
           <div className="space-y-4">
@@ -257,18 +304,20 @@ function ProfileTab() {
           {editing ? (
             <div className="grid grid-cols-2 gap-2">
               {NICHE_OPTIONS.map((cat) => (
-                <button
+                <motion.button
                   key={cat.value}
                   type="button"
                   onClick={() => handleCategoryToggle(cat.value)}
-                  className={`px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`px-3 py-2 rounded-xl border text-sm font-medium transition-all ${
                     formData.categories.includes(cat.value)
-                      ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-transparent'
-                      : 'bg-background border-border hover:border-blue-500/50 text-foreground/70'
+                      ? 'bg-blue-500/10 text-blue-400 border-blue-500/50'
+                      : 'bg-transparent border-[#222] text-[#888] hover:border-[#333]'
                   }`}
                 >
                   {cat.label}
-                </button>
+                </motion.button>
               ))}
             </div>
           ) : (
@@ -278,13 +327,13 @@ function ProfileTab() {
                   <Badge key={i} variant="info" size="lg">{cat}</Badge>
                 ))
               ) : (
-                <p className="text-foreground/50">No categories selected</p>
+                <p className="text-[#888]">No categories selected</p>
               )}
             </div>
           )}
         </Card>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -334,32 +383,50 @@ function ProductsTab() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div 
+        className="flex items-center justify-between"
+        variants={fadeInUp}
+      >
         <div>
           <h3 className="text-lg font-semibold">Your Products</h3>
-          <p className="text-sm text-foreground/60">{brandProducts.length} products uploaded</p>
+          <p className="text-sm text-[#888]">{brandProducts.length} products uploaded</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>+ Add Product</Button>
-      </div>
+      </motion.div>
 
       {brandProducts.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {brandProducts.map((product) => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-              showDelete={true}
-              onDelete={() => setDeleteConfirm(product.id)}
-            />
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          variants={staggerContainer}
+        >
+          {brandProducts.map((product, index) => (
+            <motion.div 
+              key={product.id}
+              variants={fadeInUp}
+              transition={{ delay: index * 0.05 }}
+            >
+              <ProductCard 
+                product={product} 
+                showDelete={true}
+                onDelete={() => setDeleteConfirm(product.id)}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       ) : (
-        <EmptyState 
-          icon="box" 
-          title="No products yet" 
-          description="Upload your first product to start reaching influencers" 
-        />
+        <motion.div variants={fadeInUp}>
+          <EmptyState 
+            icon="box" 
+            title="No products yet" 
+            description="Upload your first product to start reaching influencers" 
+          />
+        </motion.div>
       )}
 
       {/* Add Product Modal */}
@@ -400,7 +467,7 @@ function ProductsTab() {
               placeholder="10"
             />
           </div>
-          <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+          <div className="p-4 bg-[#111] border border-blue-500/30 rounded-xl">
             <p className="text-blue-400 text-sm">
               💡 Products will be visible to influencers matching the category you select.
             </p>
@@ -427,7 +494,7 @@ function ProductsTab() {
         variant="danger"
         confirmText="Delete"
       />
-    </div>
+    </motion.div>
   );
 }
 
@@ -444,10 +511,13 @@ function ProductCard({ product, showDelete = false, onDelete }: ProductCardProps
   const categoryLabel = NICHE_OPTIONS.find(n => n.value === product.category)?.label || product.category;
 
   return (
-    <Card hover className="flex flex-col">
+    <motion.div 
+      className="bg-[#111] border border-[#222] rounded-2xl p-5 flex flex-col hover:border-[#333] transition-colors"
+      whileHover={{ y: -2 }}
+    >
       {/* Product Image Placeholder */}
-      <div className="w-full h-40 bg-gradient-to-br from-border to-border/50 rounded-lg mb-4 flex items-center justify-center">
-        <span className="text-4xl opacity-50">📦</span>
+      <div className="w-full h-40 bg-[#0a0a0a] border border-[#222] rounded-xl mb-4 flex items-center justify-center">
+        <Icon name="box" size={40} className="text-[#333]" />
       </div>
 
       {/* Product Info */}
@@ -457,18 +527,18 @@ function ProductCard({ product, showDelete = false, onDelete }: ProductCardProps
           <Badge variant="accent" size="sm">{product.commission}%</Badge>
         </div>
         <Badge variant="info" size="sm">{categoryLabel}</Badge>
-        <p className="text-sm text-foreground/60 mt-2 line-clamp-2">{product.description}</p>
-        <p className="text-lg font-bold text-accent mt-3">₹{product.price.toLocaleString()}</p>
+        <p className="text-sm text-[#666] mt-2 line-clamp-2">{product.description}</p>
+        <p className="text-lg font-semibold text-accent mt-3">₹{product.price.toLocaleString()}</p>
       </div>
 
       {/* Delete Action */}
       {showDelete && (
-        <div className="mt-4 pt-4 border-t border-border">
+        <div className="mt-4 pt-4 border-t border-[#222]">
           <Button variant="outline" size="sm" className="w-full" onClick={onDelete}>
             Delete Product
           </Button>
         </div>
       )}
-    </Card>
+    </motion.div>
   );
 }

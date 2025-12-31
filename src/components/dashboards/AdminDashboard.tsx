@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 import { useAdminStore } from '@/store/adminStore';
 import { useRouter } from 'next/navigation';
@@ -23,13 +24,27 @@ import {
   PageContainer,
   Icon,
 } from '@/components/ui';
-import { AdminUser, AdminProduct, AdminCampaign, Payout } from '@/types';
+import { AdminUser, AdminProduct, AdminCampaign } from '@/types';
 import {
   ADMIN_TABS,
   AdminTab,
   SYSTEM_SERVICES,
   REVENUE_CATEGORIES,
 } from '@/constants';
+
+// Animation variants
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
+};
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
@@ -50,7 +65,7 @@ export default function AdminDashboard() {
   const unreadNotifications = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-[#0a0a0a] flex">
       {/* Sidebar */}
       <Sidebar
         tabs={ADMIN_TABS}
@@ -75,15 +90,17 @@ export default function AdminDashboard() {
         </DashboardHeader>
 
         <PageContainer>
-          {activeTab === 'overview' && <OverviewTab />}
-          {activeTab === 'users' && <UsersTab />}
-          {activeTab === 'products' && <ProductsTab />}
-          {activeTab === 'campaigns' && <CampaignsTab />}
-          {activeTab === 'messaging' && <MessagingTab />}
-          {activeTab === 'analytics' && <AnalyticsTab />}
-          {activeTab === 'payments' && <PaymentsTab />}
-          {activeTab === 'moderation' && <ModerationTab />}
-          {activeTab === 'system' && <SystemTab />}
+          <AnimatePresence mode="wait">
+            {activeTab === 'overview' && <OverviewTab key="overview" />}
+            {activeTab === 'users' && <UsersTab key="users" />}
+            {activeTab === 'products' && <ProductsTab key="products" />}
+            {activeTab === 'campaigns' && <CampaignsTab key="campaigns" />}
+            {activeTab === 'messaging' && <MessagingTab key="messaging" />}
+            {activeTab === 'analytics' && <AnalyticsTab key="analytics" />}
+            {activeTab === 'payments' && <PaymentsTab key="payments" />}
+            {activeTab === 'moderation' && <ModerationTab key="moderation" />}
+            {activeTab === 'system' && <SystemTab key="system" />}
+          </AnimatePresence>
         </PageContainer>
       </main>
     </div>
@@ -100,56 +117,76 @@ function OverviewTab() {
   const pendingReports = reports.filter(r => r.status === 'pending').length;
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+        variants={fadeInUp}
+      >
         <StatCard label="Total GMV" value={`₹${(platformStats.totalGMV / 10000000).toFixed(1)}Cr`} change="+23.5%" icon="wallet" />
         <StatCard label="Active Creators" value={platformStats.activeCreators.toLocaleString()} change="+156" icon="star" />
         <StatCard label="Active Brands" value={platformStats.activeBrands.toString()} change="+12" icon="building" />
         <StatCard label="Platform Revenue" value={`₹${(platformStats.platformRevenue / 100000).toFixed(0)}L`} change="+18.2%" icon="trending-up" />
-      </div>
+      </motion.div>
 
       {/* Alerts */}
       {(pendingApprovals > 0 || pendingReports > 0) && (
-        <Alert type="warning" title="Action Required">
-          {pendingApprovals > 0 && <span>{pendingApprovals} items pending approval. </span>}
-          {pendingReports > 0 && <span>{pendingReports} reports need review.</span>}
-        </Alert>
+        <motion.div variants={fadeInUp}>
+          <Alert type="warning" title="Action Required">
+            {pendingApprovals > 0 && <span>{pendingApprovals} items pending approval. </span>}
+            {pendingReports > 0 && <span>{pendingReports} reports need review.</span>}
+          </Alert>
+        </motion.div>
       )}
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        variants={fadeInUp}
+      >
         {[
           { label: 'Pending Approvals', value: pendingApprovals, icon: 'clipboard', color: 'yellow' },
           { label: 'Active Campaigns', value: campaigns.filter(c => c.status === 'active').length, icon: 'megaphone', color: 'green' },
           { label: 'Open Reports', value: pendingReports, icon: 'document', color: 'blue' },
           { label: 'Suspended Users', value: users.filter(u => u.status === 'suspended').length, icon: 'shield', color: 'red' },
         ].map((item, i) => (
-          <Card key={i} hover className="cursor-pointer">
-            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent mb-2">
+          <motion.div 
+            key={i}
+            className="bg-[#111] border border-[#222] rounded-2xl p-5 cursor-pointer hover:border-[#333] transition-colors"
+            whileHover={{ y: -2 }}
+          >
+            <div className="w-10 h-10 rounded-xl border border-accent/30 bg-accent/5 flex items-center justify-center text-accent mb-3">
               <Icon name={item.icon} size={20} />
             </div>
-            <p className="text-3xl font-bold text-accent">{item.value}</p>
-            <p className="text-sm text-foreground/60">{item.label}</p>
-          </Card>
+            <p className="text-3xl font-semibold text-accent">{item.value}</p>
+            <p className="text-sm text-[#888]">{item.label}</p>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div 
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+        variants={fadeInUp}
+      >
         <Card>
           <h3 className="font-semibold mb-4">Platform Growth</h3>
-          <div className="h-48 flex items-center justify-center text-foreground/40 border border-dashed border-border rounded-lg">
+          <div className="h-48 flex items-center justify-center text-[#555] border border-dashed border-[#222] rounded-xl">
             <Icon name="chart" size={24} className="inline mr-2" /> Growth chart
           </div>
         </Card>
         <Card>
           <h3 className="font-semibold mb-4">Revenue Breakdown</h3>
-          <div className="h-48 flex items-center justify-center text-foreground/40 border border-dashed border-border rounded-lg">
+          <div className="h-48 flex items-center justify-center text-[#555] border border-dashed border-[#222] rounded-xl">
             <Icon name="trending-up" size={24} className="inline mr-2" /> Revenue chart
           </div>
         </Card>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -183,14 +220,14 @@ function UsersTab() {
       header: 'User',
       render: (u: AdminUser) => (
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-            u.type === 'influencer' ? 'bg-purple-500/20 text-purple-500' : 'bg-blue-500/20 text-blue-500'
+          <div className={`w-10 h-10 rounded-full border flex items-center justify-center font-semibold ${
+            u.type === 'influencer' ? 'border-purple-500/50 bg-purple-500/10 text-purple-400' : 'border-blue-500/50 bg-blue-500/10 text-blue-400'
           }`}>
             {u.name.charAt(0)}
           </div>
           <div>
             <p className="font-medium">{u.name}</p>
-            <p className="text-sm text-foreground/60">{u.email}</p>
+            <p className="text-sm text-[#888]">{u.email}</p>
           </div>
         </div>
       ),
@@ -240,17 +277,28 @@ function UsersTab() {
   ];
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        variants={fadeInUp}
+      >
         <StatCard label="Total Users" value={users.length.toString()} icon="users" />
         <StatCard label="Influencers" value={users.filter(u => u.type === 'influencer').length.toString()} icon="star" />
         <StatCard label="Brands" value={users.filter(u => u.type === 'brand').length.toString()} icon="building" />
         <StatCard label="Suspended" value={users.filter(u => u.status === 'suspended').length.toString()} icon="shield" />
-      </div>
+      </motion.div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-4">
+      <motion.div 
+        className="flex flex-wrap items-center gap-4"
+        variants={fadeInUp}
+      >
         <Tabs
           tabs={[
             { id: 'all', label: 'All' },
@@ -272,9 +320,11 @@ function UsersTab() {
           ]}
           className="w-40"
         />
-      </div>
+      </motion.div>
 
-      <Table columns={columns} data={filteredUsers} keyExtractor={(u) => u.id} />
+      <motion.div variants={fadeInUp}>
+        <Table columns={columns} data={filteredUsers} keyExtractor={(u) => u.id} />
+      </motion.div>
 
       <ConfirmDialog
         isOpen={!!actionConfirm}
@@ -285,7 +335,7 @@ function UsersTab() {
         variant={actionConfirm?.action === 'suspend' ? 'danger' : 'default'}
         confirmText={actionConfirm?.action === 'suspend' ? 'Suspend' : actionConfirm?.action === 'activate' ? 'Activate' : 'Approve'}
       />
-    </div>
+    </motion.div>
   );
 }
 
@@ -317,7 +367,7 @@ function ProductsTab() {
     {
       key: 'reports',
       header: 'Reports',
-      render: (p: AdminProduct) => p.reports > 0 ? <span className="text-red-500">{p.reports}</span> : <span className="text-foreground/40">0</span>,
+      render: (p: AdminProduct) => p.reports > 0 ? <span className="text-red-500">{p.reports}</span> : <span className="text-[#555]">0</span>,
     },
     {
       key: 'status',
@@ -348,27 +398,39 @@ function ProductsTab() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        variants={fadeInUp}
+      >
         <StatCard label="Total Products" value={products.length.toString()} icon="box" />
         <StatCard label="Pending" value={products.filter(p => p.status === 'pending').length.toString()} icon="clock" />
         <StatCard label="Approved" value={products.filter(p => p.status === 'approved').length.toString()} icon="check-circle" />
         <StatCard label="Reported" value={products.filter(p => p.reports > 0).length.toString()} icon="shield" />
-      </div>
+      </motion.div>
 
-      <Tabs
-        tabs={[
-          { id: 'all', label: 'All' },
-          { id: 'pending', label: 'Pending' },
-          { id: 'approved', label: 'Approved' },
-          { id: 'rejected', label: 'Rejected' },
-        ]}
-        activeTab={filter}
-        onChange={(id) => setFilter(id as typeof filter)}
-        variant="pills"
-      />
+      <motion.div variants={fadeInUp}>
+        <Tabs
+          tabs={[
+            { id: 'all', label: 'All' },
+            { id: 'pending', label: 'Pending' },
+            { id: 'approved', label: 'Approved' },
+            { id: 'rejected', label: 'Rejected' },
+          ]}
+          activeTab={filter}
+          onChange={(id) => setFilter(id as typeof filter)}
+          variant="pills"
+        />
+      </motion.div>
 
-      <Table columns={columns} data={filteredProducts} keyExtractor={(p) => p.id} />
+      <motion.div variants={fadeInUp}>
+        <Table columns={columns} data={filteredProducts} keyExtractor={(p) => p.id} />
+      </motion.div>
 
       <ConfirmDialog
         isOpen={!!actionConfirm}
@@ -378,7 +440,7 @@ function ProductsTab() {
         variant={actionConfirm?.action !== 'approve' ? 'danger' : 'default'}
         confirmText={actionConfirm?.action === 'approve' ? 'Approve' : actionConfirm?.action === 'reject' ? 'Reject' : 'Remove'}
       />
-    </div>
+    </motion.div>
   );
 }
 
@@ -429,15 +491,25 @@ function CampaignsTab() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        variants={fadeInUp}
+      >
         <StatCard label="Total Campaigns" value={campaigns.length.toString()} icon="megaphone" />
         <StatCard label="Active" value={campaigns.filter(c => c.status === 'active').length.toString()} icon="play-circle" />
         <StatCard label="Pending" value={campaigns.filter(c => c.status === 'pending').length.toString()} icon="clock" />
         <StatCard label="Total Budget" value={`₹${campaigns.reduce((s, c) => s + c.budget, 0).toLocaleString()}`} icon="wallet" />
-      </div>
+      </motion.div>
 
-      <Table columns={columns} data={campaigns} keyExtractor={(c) => c.id} />
+      <motion.div variants={fadeInUp}>
+        <Table columns={columns} data={campaigns} keyExtractor={(c) => c.id} />
+      </motion.div>
 
       <ConfirmDialog
         isOpen={!!actionConfirm}
@@ -447,7 +519,7 @@ function CampaignsTab() {
         variant={actionConfirm?.action === 'reject' ? 'danger' : 'default'}
         confirmText={actionConfirm?.action === 'approve' ? 'Approve' : 'Reject'}
       />
-    </div>
+    </motion.div>
   );
 }
 
@@ -465,63 +537,75 @@ function MessagingTab() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        variants={fadeInUp}
+      >
         <StatCard label="Messages Today" value={platformStats.messagesDelivered.toLocaleString()} icon="send" />
         <StatCard label="Delivery Rate" value={`${platformStats.messageDeliveryRate}%`} icon="check-circle" />
         <StatCard label="Queue Size" value="1,234" icon="clipboard" />
         <StatCard label="Failed" value="12" icon="x-mark" />
-      </div>
+      </motion.div>
 
       {/* Message Rules */}
-      <Card>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Message Rules & Limits</h3>
-          <Button variant="outline" size="sm" onClick={() => setEditingRules(!editingRules)}>
-            {editingRules ? 'Cancel' : 'Edit'}
-          </Button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input
-            label="Max Messages per Hour (per user)"
-            type="number"
-            value={rules.maxPerHour}
-            onChange={(e) => setRules({ ...rules, maxPerHour: Number(e.target.value) })}
-            disabled={!editingRules}
-          />
-          <Input
-            label="Max Messages per Day (per user)"
-            type="number"
-            value={rules.maxPerDay}
-            onChange={(e) => setRules({ ...rules, maxPerDay: Number(e.target.value) })}
-            disabled={!editingRules}
-          />
-          <Input
-            label="Cool-down Period (minutes)"
-            type="number"
-            value={rules.cooldownMinutes}
-            onChange={(e) => setRules({ ...rules, cooldownMinutes: Number(e.target.value) })}
-            disabled={!editingRules}
-          />
-        </div>
-        {editingRules && (
-          <Button onClick={handleSaveRules} className="mt-4">Save Rules</Button>
-        )}
-      </Card>
+      <motion.div variants={fadeInUp}>
+        <Card>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold">Message Rules & Limits</h3>
+            <Button variant="outline" size="sm" onClick={() => setEditingRules(!editingRules)}>
+              {editingRules ? 'Cancel' : 'Edit'}
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              label="Max Messages per Hour (per user)"
+              type="number"
+              value={rules.maxPerHour}
+              onChange={(e) => setRules({ ...rules, maxPerHour: Number(e.target.value) })}
+              disabled={!editingRules}
+            />
+            <Input
+              label="Max Messages per Day (per user)"
+              type="number"
+              value={rules.maxPerDay}
+              onChange={(e) => setRules({ ...rules, maxPerDay: Number(e.target.value) })}
+              disabled={!editingRules}
+            />
+            <Input
+              label="Cool-down Period (minutes)"
+              type="number"
+              value={rules.cooldownMinutes}
+              onChange={(e) => setRules({ ...rules, cooldownMinutes: Number(e.target.value) })}
+              disabled={!editingRules}
+            />
+          </div>
+          {editingRules && (
+            <Button onClick={handleSaveRules} className="mt-4">Save Rules</Button>
+          )}
+        </Card>
+      </motion.div>
 
       {/* Compliance */}
-      <Card>
-        <h3 className="font-semibold mb-4">Platform Compliance</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Alert type="success" title="Rate Limiting Active">
-            Messages are throttled to comply with platform limits
-          </Alert>
-          <Alert type="success" title="Content Filtering">
-            Spam and prohibited content is blocked
-          </Alert>
-        </div>
-      </Card>
-    </div>
+      <motion.div variants={fadeInUp}>
+        <Card>
+          <h3 className="font-semibold mb-4">Platform Compliance</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Alert type="success" title="Rate Limiting Active">
+              Messages are throttled to comply with platform limits
+            </Alert>
+            <Alert type="success" title="Content Filtering">
+              Spam and prohibited content is blocked
+            </Alert>
+          </div>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -532,34 +616,46 @@ function AnalyticsTab() {
   const { platformStats } = useAdminStore();
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        variants={fadeInUp}
+      >
         <StatCard label="Total GMV" value={`₹${(platformStats.totalGMV / 10000000).toFixed(1)}Cr`} change="+23.5%" icon="wallet" />
         <StatCard label="Active Creators" value={platformStats.activeCreators.toLocaleString()} change="+12%" icon="star" />
         <StatCard label="Active Brands" value={platformStats.activeBrands.toString()} change="+8%" icon="building" />
         <StatCard label="Platform Revenue" value={`₹${(platformStats.platformRevenue / 100000).toFixed(0)}L`} change="+18%" icon="trending-up" />
-      </div>
+      </motion.div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div 
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+        variants={fadeInUp}
+      >
         <Card>
           <h3 className="font-semibold mb-4">GMV Over Time</h3>
-          <div className="h-64 flex items-center justify-center text-foreground/40 border border-dashed border-border rounded-lg">
+          <div className="h-64 flex items-center justify-center text-[#555] border border-dashed border-[#222] rounded-xl">
             📊 Chart visualization
           </div>
         </Card>
         <Card>
           <h3 className="font-semibold mb-4">User Growth</h3>
-          <div className="h-64 flex items-center justify-center text-foreground/40 border border-dashed border-border rounded-lg">
+          <div className="h-64 flex items-center justify-center text-[#555] border border-dashed border-[#222] rounded-xl">
             📈 Chart visualization
           </div>
         </Card>
-      </div>
+      </motion.div>
 
       {/* Revenue Breakdown */}
-      <Card>
-        <h3 className="font-semibold mb-4">Revenue by Category</h3>
-        <Table
+      <motion.div variants={fadeInUp}>
+        <Card>
+          <h3 className="font-semibold mb-4">Revenue by Category</h3>
+          <Table
             columns={[
               { key: 'category', header: 'Category' },
               { key: 'gmv', header: 'GMV' },
@@ -567,10 +663,11 @@ function AnalyticsTab() {
               { key: 'revenue', header: 'Revenue', render: (r) => <span className="text-accent font-medium">{r.revenue}</span> },
             ]}
             data={REVENUE_CATEGORIES}
-          keyExtractor={(r) => r.category}
-        />
-      </Card>
-    </div>
+            keyExtractor={(r) => r.category}
+          />
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -588,59 +685,75 @@ function PaymentsTab() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        variants={fadeInUp}
+      >
         <StatCard label="Total Payouts" value={`₹${(platformStats.totalPayouts / 100000).toFixed(0)}L`} icon="credit-card" />
         <StatCard label="Pending Payouts" value={`₹${(platformStats.pendingPayouts / 100000).toFixed(1)}L`} icon="clock" />
         <StatCard label="Platform Revenue" value={`₹${(platformStats.platformRevenue / 100000).toFixed(0)}L`} icon="wallet" />
         <StatCard label="Commission Rate" value="2.5%" icon="chart" />
-      </div>
+      </motion.div>
 
       {/* Pending Payouts */}
-      <Card>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Pending Creator Payouts</h3>
-          <Button size="sm">Process All</Button>
-        </div>
-        {pendingPayouts.length > 0 ? (
-          <div className="space-y-3">
-            {pendingPayouts.map((payout) => (
-              <div key={payout.id} className="flex items-center justify-between p-4 bg-background rounded-xl border border-border">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold">
-                    {payout.bankDetails?.accountHolderName?.charAt(0) || 'U'}
-                  </div>
-                  <div>
-                    <p className="font-medium">{payout.bankDetails?.accountHolderName || 'User'}</p>
-                    <p className="text-sm text-foreground/60">
-                      {payout.method === 'bank' ? `${payout.bankDetails?.bankName} ${payout.bankDetails?.accountNumber}` : payout.upiId}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="font-medium">₹{payout.amount.toLocaleString()}</span>
-                  <Button 
-                    size="sm" 
-                    onClick={() => handleProcess(payout.id)}
-                    loading={processingId === payout.id}
-                    disabled={payout.status !== 'pending'}
-                  >
-                    {payout.status === 'processing' ? 'Processing...' : 'Process'}
-                  </Button>
-                </div>
-              </div>
-            ))}
+      <motion.div variants={fadeInUp}>
+        <Card>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold">Pending Creator Payouts</h3>
+            <Button size="sm">Process All</Button>
           </div>
-        ) : (
-          <EmptyState icon="check-circle" title="No pending payouts" description="All payouts have been processed" />
-        )}
-      </Card>
+          {pendingPayouts.length > 0 ? (
+            <div className="space-y-3">
+              {pendingPayouts.map((payout) => (
+                <motion.div 
+                  key={payout.id} 
+                  className="flex items-center justify-between p-4 bg-[#0a0a0a] rounded-xl border border-[#222]"
+                  whileHover={{ borderColor: '#333' }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full border border-accent/50 bg-accent/10 flex items-center justify-center text-accent font-semibold">
+                      {payout.bankDetails?.accountHolderName?.charAt(0) || 'U'}
+                    </div>
+                    <div>
+                      <p className="font-medium">{payout.bankDetails?.accountHolderName || 'User'}</p>
+                      <p className="text-sm text-[#888]">
+                        {payout.method === 'bank' ? `${payout.bankDetails?.bankName} ${payout.bankDetails?.accountNumber}` : payout.upiId}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="font-medium">₹{payout.amount.toLocaleString()}</span>
+                    <Button 
+                      size="sm" 
+                      onClick={() => handleProcess(payout.id)}
+                      loading={processingId === payout.id}
+                      disabled={payout.status !== 'pending'}
+                    >
+                      {payout.status === 'processing' ? 'Processing...' : 'Process'}
+                    </Button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState icon="check-circle" title="No pending payouts" description="All payouts have been processed" />
+          )}
+        </Card>
+      </motion.div>
 
       {/* Fraud Detection */}
-      <Alert type="warning" title="Fraud Detection">
-        <p>Suspicious activity monitoring is active. 2 alerts in the last 24 hours.</p>
-      </Alert>
-    </div>
+      <motion.div variants={fadeInUp}>
+        <Alert type="warning" title="Fraud Detection">
+          <p>Suspicious activity monitoring is active. 2 alerts in the last 24 hours.</p>
+        </Alert>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -661,56 +774,70 @@ function ModerationTab() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        variants={fadeInUp}
+      >
         <StatCard label="Total Reports" value={reports.length.toString()} icon="document" />
         <StatCard label="Pending" value={reports.filter(r => r.status === 'pending').length.toString()} icon="clipboard" />
         <StatCard label="Investigating" value={reports.filter(r => r.status === 'investigating').length.toString()} icon="target" />
         <StatCard label="Resolved" value={reports.filter(r => r.status === 'resolved').length.toString()} icon="check-circle" />
-      </div>
+      </motion.div>
 
-      <Card>
-        <h3 className="font-semibold mb-4">Reported Content</h3>
-        {reports.length > 0 ? (
-          <div className="space-y-3">
-            {reports.map((report) => (
-              <div key={report.id} className="flex items-center justify-between p-4 bg-background rounded-xl border border-border">
-                <div className="flex items-center gap-4">
-                  <Badge variant={report.type === 'product' ? 'info' : report.type === 'user' ? 'warning' : 'accent'}>
-                    {report.type}
-                  </Badge>
-                  <div>
-                    <p className="font-medium">{report.targetName}</p>
-                    <p className="text-sm text-foreground/60">{report.reason}</p>
+      <motion.div variants={fadeInUp}>
+        <Card>
+          <h3 className="font-semibold mb-4">Reported Content</h3>
+          {reports.length > 0 ? (
+            <div className="space-y-3">
+              {reports.map((report) => (
+                <motion.div 
+                  key={report.id} 
+                  className="flex items-center justify-between p-4 bg-[#0a0a0a] rounded-xl border border-[#222]"
+                  whileHover={{ borderColor: '#333' }}
+                >
+                  <div className="flex items-center gap-4">
+                    <Badge variant={report.type === 'product' ? 'info' : report.type === 'user' ? 'warning' : 'accent'}>
+                      {report.type}
+                    </Badge>
+                    <div>
+                      <p className="font-medium">{report.targetName}</p>
+                      <p className="text-sm text-[#888]">{report.reason}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Badge variant={report.status === 'pending' ? 'warning' : report.status === 'investigating' ? 'info' : 'success'}>
-                    {report.status}
-                  </Badge>
-                  {report.status === 'pending' && (
-                    <Button size="sm" onClick={() => setActionConfirm({ id: report.id, action: 'investigate' })}>
-                      Investigate
-                    </Button>
-                  )}
-                  {report.status === 'investigating' && (
-                    <>
-                      <Button size="sm" onClick={() => setActionConfirm({ id: report.id, action: 'resolve' })}>
-                        Resolve
+                  <div className="flex items-center gap-3">
+                    <Badge variant={report.status === 'pending' ? 'warning' : report.status === 'investigating' ? 'info' : 'success'}>
+                      {report.status}
+                    </Badge>
+                    {report.status === 'pending' && (
+                      <Button size="sm" onClick={() => setActionConfirm({ id: report.id, action: 'investigate' })}>
+                        Investigate
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => setActionConfirm({ id: report.id, action: 'dismiss' })}>
-                        Dismiss
-                      </Button>
-                    </>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <EmptyState icon="sparkles" title="No reports" description="Everything looks clean!" />
-        )}
-      </Card>
+                    )}
+                    {report.status === 'investigating' && (
+                      <>
+                        <Button size="sm" onClick={() => setActionConfirm({ id: report.id, action: 'resolve' })}>
+                          Resolve
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => setActionConfirm({ id: report.id, action: 'dismiss' })}>
+                          Dismiss
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState icon="sparkles" title="No reports" description="Everything looks clean!" />
+          )}
+        </Card>
+      </motion.div>
 
       <ConfirmDialog
         isOpen={!!actionConfirm}
@@ -719,7 +846,7 @@ function ModerationTab() {
         title={`${actionConfirm?.action === 'investigate' ? 'Start Investigation' : actionConfirm?.action === 'resolve' ? 'Resolve Report' : 'Dismiss Report'}?`}
         confirmText={actionConfirm?.action === 'investigate' ? 'Investigate' : actionConfirm?.action === 'resolve' ? 'Resolve' : 'Dismiss'}
       />
-    </div>
+    </motion.div>
   );
 }
 
@@ -730,69 +857,87 @@ function SystemTab() {
   const { featureToggles, toggleFeature } = useAdminStore();
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
       {/* System Health */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        variants={fadeInUp}
+      >
         <StatCard label="API Uptime" value="99.9%" icon="cog" />
         <StatCard label="Response Time" value="45ms" icon="bolt" />
         <StatCard label="Error Rate" value="0.1%" icon="check-circle" />
         <StatCard label="Active Sessions" value="2,345" icon="users" />
-      </div>
+      </motion.div>
 
       {/* Feature Toggles */}
-      <Card>
-        <h3 className="font-semibold mb-4">Feature Toggles</h3>
-        <div className="space-y-3">
-          {featureToggles.map((toggle) => (
-            <div key={toggle.id} className="flex items-center justify-between p-4 bg-background rounded-xl border border-border">
-              <div>
-                <p className="font-medium">{toggle.name}</p>
-                <p className="text-sm text-foreground/60">{toggle.description}</p>
-              </div>
-              <Toggle checked={toggle.enabled} onChange={() => toggleFeature(toggle.id)} />
-            </div>
-          ))}
-        </div>
-      </Card>
+      <motion.div variants={fadeInUp}>
+        <Card>
+          <h3 className="font-semibold mb-4">Feature Toggles</h3>
+          <div className="space-y-3">
+            {featureToggles.map((toggle) => (
+              <motion.div 
+                key={toggle.id} 
+                className="flex items-center justify-between p-4 bg-[#0a0a0a] rounded-xl border border-[#222]"
+                whileHover={{ borderColor: '#333' }}
+              >
+                <div>
+                  <p className="font-medium">{toggle.name}</p>
+                  <p className="text-sm text-[#888]">{toggle.description}</p>
+                </div>
+                <Toggle checked={toggle.enabled} onChange={() => toggleFeature(toggle.id)} />
+              </motion.div>
+            ))}
+          </div>
+        </Card>
+      </motion.div>
 
       {/* Service Status */}
-      <Card>
-        <h3 className="font-semibold mb-4">Service Status</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {SYSTEM_SERVICES.map((service, i) => (
-            <div key={i} className="p-4 bg-background rounded-xl border border-border">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xl">{service.icon}</span>
-                <span className="font-medium">{service.name}</span>
+      <motion.div variants={fadeInUp}>
+        <Card>
+          <h3 className="font-semibold mb-4">Service Status</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {SYSTEM_SERVICES.map((service, i) => (
+              <div key={i} className="p-4 bg-[#0a0a0a] rounded-xl border border-[#222]">
+                <div className="flex items-center gap-2 mb-2">
+                  <Icon name={service.icon} size={20} className="text-accent" />
+                  <span className="font-medium">{service.name}</span>
+                </div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="w-2 h-2 bg-green-500 rounded-full" />
+                  <span className="text-sm text-green-400">{service.status}</span>
+                </div>
+                <p className="text-sm text-[#888]">{service.processed}</p>
               </div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="w-2 h-2 bg-green-500 rounded-full" />
-                <span className="text-sm text-green-500">{service.status}</span>
-              </div>
-              <p className="text-sm text-foreground/60">{service.processed}</p>
-            </div>
-          ))}
-        </div>
-      </Card>
+            ))}
+          </div>
+        </Card>
+      </motion.div>
 
       {/* Logs */}
-      <Card>
-        <h3 className="font-semibold mb-4">Recent Logs</h3>
-        <div className="space-y-2 font-mono text-sm max-h-64 overflow-auto">
-          {[
-            { time: '14:32:15', level: 'INFO', msg: 'Campaign approved: Summer Beauty' },
-            { time: '14:32:10', level: 'INFO', msg: 'User registered: new_influencer@mail.com' },
-            { time: '14:31:55', level: 'WARN', msg: 'Rate limit hit for user_123' },
-            { time: '14:31:40', level: 'INFO', msg: 'Payout processed: ₹15,000' },
-          ].map((log, i) => (
-            <div key={i} className="flex items-center gap-4 p-2 rounded hover:bg-border/30">
-              <span className="text-foreground/50">{log.time}</span>
-              <Badge variant={log.level === 'WARN' ? 'warning' : 'info'} size="sm">{log.level}</Badge>
-              <span>{log.msg}</span>
-            </div>
-          ))}
-        </div>
-      </Card>
-    </div>
+      <motion.div variants={fadeInUp}>
+        <Card>
+          <h3 className="font-semibold mb-4">Recent Logs</h3>
+          <div className="space-y-2 font-mono text-sm max-h-64 overflow-auto">
+            {[
+              { time: '14:32:15', level: 'INFO', msg: 'Campaign approved: Summer Beauty' },
+              { time: '14:32:10', level: 'INFO', msg: 'User registered: new_influencer@mail.com' },
+              { time: '14:31:55', level: 'WARN', msg: 'Rate limit hit for user_123' },
+              { time: '14:31:40', level: 'INFO', msg: 'Payout processed: ₹15,000' },
+            ].map((log, i) => (
+              <div key={i} className="flex items-center gap-4 p-2 rounded hover:bg-[#111]">
+                <span className="text-[#666]">{log.time}</span>
+                <Badge variant={log.level === 'WARN' ? 'warning' : 'info'} size="sm">{log.level}</Badge>
+                <span>{log.msg}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 }

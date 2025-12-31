@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
-import { loginSchema, signupSchema, LoginFormData, SignupFormData } from '@/lib/validations';
+import { loginSchema, signupSchema } from '@/lib/validations';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -84,188 +85,210 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/80 backdrop-blur-md"
-        onClick={onClose}
-      />
-
-      {/* Modal */}
-      <div className="relative w-full max-w-md bg-gradient-to-br from-card to-card/95 border border-border/80 rounded-2xl p-8 animate-scale-in shadow-2xl">
-        {/* Decorative gradient */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 rounded-t-2xl" />
-        
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-border/50 transition-colors text-foreground/60 hover:text-foreground"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+          {/* Backdrop */}
+          <motion.div 
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
 
-        {/* Logo */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center shadow-lg shadow-orange-500/20">
-            <span className="text-white font-bold text-xl">M</span>
-          </div>
-          <span className="font-bold text-xl tracking-tight">Merch Nest</span>
-        </div>
-
-        {/* Title */}
-        <h2 className="text-2xl font-bold mb-2">
-          {mode === 'login' ? 'Welcome back!' : 'Create an account'}
-        </h2>
-        <p className="text-foreground/60 mb-6">
-          {mode === 'login' 
-            ? 'Sign in to access your dashboard' 
-            : 'Join Merch Nest and start earning today'}
-        </p>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {mode === 'signup' && (
-            <div>
-              <label className="block text-sm font-medium mb-1.5">Full Name</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className={`w-full px-4 py-3 bg-background border ${
-                  errors.name ? 'border-red-500' : 'border-border'
-                } rounded-xl focus:outline-none focus:border-accent transition-colors`}
-                placeholder="Enter your name"
-              />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-              )}
-            </div>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium mb-1.5">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className={`w-full px-4 py-3 bg-background border ${
-                errors.email ? 'border-red-500' : 'border-border'
-              } rounded-xl focus:outline-none focus:border-accent transition-colors`}
-              placeholder="Enter your email"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1.5">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className={`w-full px-4 py-3 bg-background border ${
-                errors.password ? 'border-red-500' : 'border-border'
-              } rounded-xl focus:outline-none focus:border-accent transition-colors`}
-              placeholder="Enter your password"
-            />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-            )}
-          </div>
-
-          {mode === 'signup' && (
-            <div>
-              <label className="block text-sm font-medium mb-1.5">Confirm Password</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className={`w-full px-4 py-3 bg-background border ${
-                  errors.confirmPassword ? 'border-red-500' : 'border-border'
-                } rounded-xl focus:outline-none focus:border-accent transition-colors`}
-                placeholder="Confirm your password"
-              />
-              {errors.confirmPassword && (
-                <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
-              )}
-            </div>
-          )}
-
-          {errors.general && (
-            <p className="text-red-500 text-sm">{errors.general}</p>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          {/* Modal */}
+          <motion.div 
+            className="relative w-full max-w-md bg-[#111] border border-[#222] rounded-2xl p-8"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
-            {isLoading ? (
-              <>
-                <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                Processing...
-              </>
-            ) : (
-              mode === 'login' ? 'Sign In' : 'Create Account'
+            {/* Accent line */}
+            <div className="absolute top-0 left-0 right-0 h-px bg-accent" />
+            
+            {/* Close button */}
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full border border-transparent hover:border-[#222] hover:bg-[#0a0a0a] transition-colors text-[#888] hover:text-foreground"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Logo */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-xl border border-accent bg-accent/10 flex items-center justify-center">
+                <span className="text-accent font-bold text-xl">M</span>
+              </div>
+              <span className="font-semibold text-xl tracking-tight">Merch Nest</span>
+            </div>
+
+            {/* Title */}
+            <h2 className="text-2xl font-semibold mb-2">
+              {mode === 'login' ? 'Welcome back!' : 'Create an account'}
+            </h2>
+            <p className="text-[#888] mb-6">
+              {mode === 'login' 
+                ? 'Sign in to access your dashboard' 
+                : 'Join Merch Nest and start earning today'}
+            </p>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {mode === 'signup' && (
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-[#888]">Full Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 bg-[#0a0a0a] border ${
+                      errors.name ? 'border-red-500' : 'border-[#222]'
+                    } rounded-xl focus:outline-none focus:border-accent transition-colors`}
+                    placeholder="Enter your name"
+                  />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                  )}
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium mb-2 text-[#888]">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 bg-[#0a0a0a] border ${
+                    errors.email ? 'border-red-500' : 'border-[#222]'
+                  } rounded-xl focus:outline-none focus:border-accent transition-colors`}
+                  placeholder="Enter your email"
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2 text-[#888]">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 bg-[#0a0a0a] border ${
+                    errors.password ? 'border-red-500' : 'border-[#222]'
+                  } rounded-xl focus:outline-none focus:border-accent transition-colors`}
+                  placeholder="Enter your password"
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                )}
+              </div>
+
+              {mode === 'signup' && (
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-[#888]">Confirm Password</label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 bg-[#0a0a0a] border ${
+                      errors.confirmPassword ? 'border-red-500' : 'border-[#222]'
+                    } rounded-xl focus:outline-none focus:border-accent transition-colors`}
+                    placeholder="Confirm your password"
+                  />
+                  {errors.confirmPassword && (
+                    <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+                  )}
+                </div>
+              )}
+
+              {errors.general && (
+                <p className="text-red-500 text-sm">{errors.general}</p>
+              )}
+
+              <motion.button
+                type="submit"
+                disabled={isLoading}
+                whileHover={{ scale: isLoading ? 1 : 1.02 }}
+                whileTap={{ scale: isLoading ? 1 : 0.98 }}
+                className="w-full py-3.5 bg-accent hover:bg-accent-hover text-[#0a0a0a] font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 border border-accent"
+              >
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Processing...
+                  </>
+                ) : (
+                  mode === 'login' ? 'Sign In' : 'Create Account'
+                )}
+              </motion.button>
+            </form>
+
+            {/* Toggle mode */}
+            <div className="mt-6 text-center text-sm">
+              <span className="text-[#888]">
+                {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+              </span>
+              <button
+                onClick={() => {
+                  setMode(mode === 'login' ? 'signup' : 'login');
+                  setErrors({});
+                  setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+                }}
+                className="text-accent hover:underline font-medium"
+              >
+                {mode === 'login' ? 'Sign up' : 'Sign in'}
+              </button>
+            </div>
+
+            {/* Password requirements hint */}
+            {mode === 'signup' && (
+              <motion.div 
+                className="mt-4 p-4 bg-[#0a0a0a] rounded-xl text-xs text-[#888] border border-[#222]"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+              >
+                <p className="font-medium text-[#aaa] mb-2">Password requirements:</p>
+                <ul className="space-y-1">
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                    At least 8 characters
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                    One uppercase letter
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                    One lowercase letter
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                    One number
+                  </li>
+                </ul>
+              </motion.div>
             )}
-          </button>
-        </form>
-
-        {/* Toggle mode */}
-        <div className="mt-6 text-center text-sm">
-          <span className="text-foreground/60">
-            {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-          </span>
-          <button
-            onClick={() => {
-              setMode(mode === 'login' ? 'signup' : 'login');
-              setErrors({});
-              setFormData({ name: '', email: '', password: '', confirmPassword: '' });
-            }}
-            className="text-accent hover:underline font-medium"
-          >
-            {mode === 'login' ? 'Sign up' : 'Sign in'}
-          </button>
-        </div>
-
-        {/* Password requirements hint */}
-        {mode === 'signup' && (
-          <div className="mt-4 p-4 bg-gradient-to-r from-orange-500/10 to-pink-500/10 rounded-xl text-xs text-foreground/60 border border-orange-500/20">
-            <p className="font-medium text-foreground/80 mb-2">Password requirements:</p>
-            <ul className="space-y-1">
-              <li className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                At least 8 characters
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                One uppercase letter
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                One lowercase letter
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                One number
-              </li>
-            </ul>
-          </div>
-        )}
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

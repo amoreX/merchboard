@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 import { useInfluencerStore } from '@/store/influencerStore';
 import { useProductStore, CatalogProduct } from '@/store/productStore';
@@ -17,8 +18,23 @@ import {
   DashboardHeader,
   NotificationBell,
   PageContainer,
+  Icon,
 } from '@/components/ui';
 import { INFLUENCER_TABS, InfluencerTab, NICHE_OPTIONS } from '@/constants';
+
+// Animation variants
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
+};
 
 export default function InfluencerDashboard() {
   const [activeTab, setActiveTab] = useState<InfluencerTab>('overview');
@@ -35,7 +51,7 @@ export default function InfluencerDashboard() {
   const unreadNotifications = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-[#0a0a0a] flex">
       {/* Sidebar */}
       <Sidebar
         tabs={INFLUENCER_TABS}
@@ -59,12 +75,14 @@ export default function InfluencerDashboard() {
         </DashboardHeader>
 
         <PageContainer>
-          {activeTab === 'overview' && <OverviewTab />}
-          {activeTab === 'profile' && <ProfileTab />}
-          {activeTab === 'store' && <StoreTab />}
-          {activeTab === 'discover' && <DiscoverTab />}
-          {activeTab === 'my-products' && <MyProductsTab />}
-          {activeTab === 'skipped' && <SkippedTab />}
+          <AnimatePresence mode="wait">
+            {activeTab === 'overview' && <OverviewTab key="overview" />}
+            {activeTab === 'profile' && <ProfileTab key="profile" />}
+            {activeTab === 'store' && <StoreTab key="store" />}
+            {activeTab === 'discover' && <DiscoverTab key="discover" />}
+            {activeTab === 'my-products' && <MyProductsTab key="my-products" />}
+            {activeTab === 'skipped' && <SkippedTab key="skipped" />}
+          </AnimatePresence>
         </PageContainer>
       </main>
     </div>
@@ -86,9 +104,17 @@ function OverviewTab() {
   ) || [];
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+        variants={fadeInUp}
+      >
         <StatCard 
           label="My Products" 
           value={acceptedProducts.length.toString()} 
@@ -109,44 +135,55 @@ function OverviewTab() {
           value={profile?.verified ? 'Verified' : 'Active'} 
           icon="user" 
         />
-      </div>
+      </motion.div>
 
       {/* Quick Profile Card */}
-      <Card>
-        <div className="flex items-start gap-6 flex-wrap">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold">
-            {profile?.displayName?.charAt(0) || 'U'}
+      <motion.div variants={fadeInUp}>
+        <Card>
+          <div className="flex items-start gap-6 flex-wrap">
+            <div className="w-20 h-20 rounded-2xl border-2 border-accent/50 bg-accent/10 flex items-center justify-center text-accent text-2xl font-bold">
+              {profile?.displayName?.charAt(0) || 'U'}
           </div>
-          <div className="flex-1 min-w-[200px]">
-            <h2 className="text-2xl font-bold">{profile?.displayName}</h2>
-            <p className="text-accent mb-3">{profile?.socialHandle}</p>
-            <div className="flex flex-wrap gap-2">
-              {nicheLabels.map((niche, i) => (
-                <Badge key={i} variant="accent" size="md">{niche}</Badge>
-              ))}
+            <div className="flex-1 min-w-[200px]">
+              <h2 className="text-xl font-semibold mb-1">{profile?.displayName}</h2>
+              <p className="text-accent mb-3">{profile?.socialHandle}</p>
+              <div className="flex flex-wrap gap-2">
+                {nicheLabels.map((niche, i) => (
+                  <Badge key={i} variant="accent" size="md">{niche}</Badge>
+                ))}
           </div>
           </div>
       </div>
         </Card>
+      </motion.div>
 
       {/* Recent Accepted Products */}
+      <motion.div variants={fadeInUp}>
       <Card>
-        <h3 className="font-semibold mb-4">Recently Accepted Products</h3>
-        {acceptedProducts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {acceptedProducts.slice(0, 3).map((product) => (
-              <ProductCard key={product.id} product={product} showActions={false} />
+          <h3 className="font-semibold mb-4">Recently Accepted Products</h3>
+          {acceptedProducts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {acceptedProducts.slice(0, 3).map((product, index) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <ProductCard product={product} showActions={false} />
+                </motion.div>
             ))}
           </div>
         ) : (
-          <EmptyState 
-            icon="shopping-bag" 
-            title="No products yet" 
-            description="Start discovering products to promote!" 
-          />
+            <EmptyState 
+              icon="shopping-bag" 
+              title="No products yet" 
+              description="Start discovering products to promote!" 
+            />
         )}
       </Card>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -204,50 +241,63 @@ function ProfileTab() {
   };
   
   return (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
       {/* Store URL Card */}
-      <Card className="bg-gradient-to-r from-orange-500/10 to-pink-500/10 border-orange-500/30">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h3 className="font-semibold mb-1">Your Public Store</h3>
-            <p className="text-sm text-foreground/60">Share this link with your followers so they can shop your picks</p>
+      <motion.div variants={fadeInUp}>
+        <Card className="border-accent/30">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h3 className="font-semibold mb-1">Your Public Store</h3>
+              <p className="text-sm text-[#888]">Share this link with your followers so they can shop your picks</p>
+            </div>
+            <div className="flex items-center gap-3 flex-wrap">
+              <code className="px-3 py-2 bg-[#0a0a0a] border border-[#222] rounded-lg text-sm text-[#888]">
+                {storeUrl}
+              </code>
+              <Button size="sm" onClick={handleCopyLink}>
+                {copied ? '✓ Copied!' : 'Copy Link'}
+              </Button>
+              <a href={storeUrl} target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="sm">View Store</Button>
+              </a>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <code className="px-3 py-2 bg-background/50 rounded-lg text-sm text-foreground/80 border border-border">
-              {storeUrl}
-            </code>
-            <Button size="sm" onClick={handleCopyLink}>
-              {copied ? '✓ Copied!' : 'Copy Link'}
-            </Button>
-            <a href={storeUrl} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm">View Store</Button>
-            </a>
-          </div>
-        </div>
-      </Card>
+        </Card>
+      </motion.div>
 
+      {/* Profile Header */}
+      <motion.div variants={fadeInUp}>
       <Card>
         <div className="flex items-start gap-6 flex-wrap">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center text-white text-3xl font-bold">
-            {profile?.displayName?.charAt(0) || 'U'}
+            <div className="w-24 h-24 rounded-2xl border-2 border-accent/50 bg-accent/10 flex items-center justify-center text-accent text-3xl font-bold">
+              {profile?.displayName?.charAt(0) || 'U'}
           </div>
           <div className="flex-1 min-w-[200px]">
-            <div className="flex items-center gap-3 mb-1">
-              <h2 className="text-2xl font-bold">{profile?.displayName}</h2>
-              {profile?.verified && <Badge variant="success">Verified</Badge>}
-            </div>
-            <p className="text-accent text-lg mb-4">{profile?.socialHandle}</p>
-            <div className="flex flex-wrap gap-2">
-              {nicheLabels.map((niche, i) => (
-                <Badge key={i} variant="accent" size="md">{niche}</Badge>
-              ))}
+              <div className="flex items-center gap-3 mb-1">
+                <h2 className="text-2xl font-semibold">{profile?.displayName}</h2>
+                {profile?.verified && <Badge variant="success">Verified</Badge>}
+              </div>
+              <p className="text-accent text-lg mb-4">{profile?.socialHandle}</p>
+              <div className="flex flex-wrap gap-2">
+                {nicheLabels.map((niche, i) => (
+                  <Badge key={i} variant="accent" size="md">{niche}</Badge>
+                ))}
             </div>
           </div>
-          <Button variant="outline" onClick={() => setEditing(true)}>Edit Profile</Button>
+            <Button variant="outline" onClick={() => setEditing(true)}>Edit Profile</Button>
         </div>
       </Card>
+      </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div 
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+        variants={fadeInUp}
+      >
         <Card>
           <h3 className="font-semibold mb-4">Profile Details</h3>
           <div className="space-y-4">
@@ -257,7 +307,7 @@ function ProfileTab() {
               disabled={!editing} 
               onChange={(e) => setFormData({ ...formData, displayName: e.target.value })} 
             />
-                <Input 
+            <Input 
               label="Social Handle" 
               value={formData.socialHandle} 
               disabled={!editing} 
@@ -285,34 +335,36 @@ function ProfileTab() {
           {editing ? (
             <div className="grid grid-cols-2 gap-2">
               {NICHE_OPTIONS.map((niche) => (
-          <button 
+                <motion.button
                   key={niche.value}
                   type="button"
                   onClick={() => handleNicheToggle(niche.value)}
-                  className={`px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`px-3 py-2 rounded-xl border text-sm font-medium transition-all ${
                     formData.niches.includes(niche.value)
-                      ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white border-transparent'
-                      : 'bg-background border-border hover:border-accent/50 text-foreground/70'
+                      ? 'bg-accent/10 text-accent border-accent'
+                      : 'bg-transparent border-[#222] text-[#888] hover:border-[#333]'
                   }`}
                 >
                   {niche.label}
-          </button>
+                </motion.button>
               ))}
-        </div>
+                </div>
           ) : (
-            <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2">
               {nicheLabels.length > 0 ? (
                 nicheLabels.map((niche, i) => (
                   <Badge key={i} variant="accent" size="lg">{niche}</Badge>
                 ))
               ) : (
-                <p className="text-foreground/50">No niches selected</p>
+                <p className="text-[#888]">No niches selected</p>
               )}
-          </div>
+        </div>
           )}
       </Card>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -341,107 +393,125 @@ function StoreTab() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
       {/* Store URL & Actions */}
-      <Card className="bg-gradient-to-r from-orange-500/10 to-pink-500/10 border-orange-500/30">
-      <div className="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h3 className="font-semibold text-lg mb-1">🏪 Your Public Store</h3>
-            <p className="text-sm text-foreground/60">This is what your followers see when they visit your store</p>
+      <motion.div variants={fadeInUp}>
+        <Card className="border-accent/30">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h3 className="font-semibold text-lg mb-1">🏪 Your Public Store</h3>
+              <p className="text-sm text-[#888]">This is what your followers see when they visit your store</p>
         </div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <code className="px-3 py-2 bg-background/50 rounded-lg text-sm text-foreground/80 border border-border max-w-[300px] truncate">
-              {storeUrl}
-            </code>
-            <Button size="sm" onClick={handleCopyLink}>
-              {copied ? '✓ Copied!' : 'Copy Link'}
+            <div className="flex items-center gap-3 flex-wrap">
+              <code className="px-3 py-2 bg-[#0a0a0a] border border-[#222] rounded-lg text-sm text-[#888] max-w-[300px] truncate">
+                {storeUrl}
+              </code>
+              <Button size="sm" onClick={handleCopyLink}>
+                {copied ? '✓ Copied!' : 'Copy Link'}
             </Button>
-            <a href={storeUrl} target="_blank" rel="noopener noreferrer">
-              <Button variant="gradient" size="sm">Open Store ↗</Button>
-            </a>
+              <a href={storeUrl} target="_blank" rel="noopener noreferrer">
+                <Button size="sm">Open Store ↗</Button>
+              </a>
           </div>
         </div>
-      </Card>
+        </Card>
+      </motion.div>
 
       {/* Store Preview */}
-      <Card padding="lg">
-        <div className="border border-border rounded-xl overflow-hidden bg-background">
-          {/* Preview Header */}
-          <div className="bg-gradient-to-r from-card to-card/80 p-6 border-b border-border">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold">
-                {profile?.displayName?.charAt(0) || 'U'}
+      <motion.div variants={fadeInUp}>
+        <Card padding="lg">
+          <div className="border border-[#222] rounded-xl overflow-hidden bg-[#0a0a0a]">
+            {/* Preview Header */}
+            <div className="bg-[#111] p-6 border-b border-[#222]">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-2xl border-2 border-accent/50 bg-accent/10 flex items-center justify-center text-accent text-2xl font-bold">
+                  {profile?.displayName?.charAt(0) || 'U'}
     </div>
       <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <h2 className="text-xl font-bold">{profile?.displayName}</h2>
-                  {profile?.verified && <Badge variant="success" size="sm">Verified</Badge>}
+                  <div className="flex items-center gap-2 mb-1">
+                    <h2 className="text-xl font-semibold">{profile?.displayName}</h2>
+                    {profile?.verified && <Badge variant="success" size="sm">Verified</Badge>}
                   </div>
-                <p className="text-accent">{profile?.socialHandle}</p>
+                  <p className="text-accent">{profile?.socialHandle}</p>
                   </div>
                 </div>
-            {profile?.bio && (
-              <p className="text-foreground/70 mt-4 max-w-2xl">{profile.bio}</p>
-            )}
-            <div className="flex flex-wrap gap-2 mt-4">
-              {nicheLabels.map((niche, i) => (
-                <Badge key={i} variant="accent" size="sm">{niche}</Badge>
-              ))}
+              {profile?.bio && (
+                <p className="text-[#888] mt-4 max-w-2xl">{profile.bio}</p>
+              )}
+              <div className="flex flex-wrap gap-2 mt-4">
+                {nicheLabels.map((niche, i) => (
+                  <Badge key={i} variant="accent" size="sm">{niche}</Badge>
+                ))}
                   </div>
                   </div>
 
-          {/* Products Preview */}
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold">Products ({acceptedProducts.length})</h3>
+            {/* Products Preview */}
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold">Products ({acceptedProducts.length})</h3>
                   </div>
-            
-            {acceptedProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {acceptedProducts.slice(0, 8).map((product) => (
-                  <StoreProductCard key={product.id} product={product} />
+              
+              {acceptedProducts.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {acceptedProducts.slice(0, 8).map((product, index) => (
+                    <motion.div
+                      key={product.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                    >
+                      <StoreProductCard product={product} />
+                    </motion.div>
             ))}
           </div>
         ) : (
-              <div className="text-center py-12 text-foreground/50">
-                <div className="text-4xl mb-3">📦</div>
-                <p className="font-medium">No products in your store yet</p>
-                <p className="text-sm">Accept products from the Discover tab to add them here</p>
+                <div className="text-center py-12 text-[#666]">
+                  <div className="text-4xl mb-3">📦</div>
+                  <p className="font-medium">No products in your store yet</p>
+                  <p className="text-sm">Accept products from the Discover tab to add them here</p>
       </div>
-            )}
+              )}
 
-            {acceptedProducts.length > 8 && (
-              <div className="text-center mt-6">
-                <Badge variant="info">+{acceptedProducts.length - 8} more products</Badge>
+              {acceptedProducts.length > 8 && (
+                <div className="text-center mt-6">
+                  <Badge variant="info">+{acceptedProducts.length - 8} more products</Badge>
                   </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </motion.div>
 
       {/* Tips Card */}
-      <Card>
-        <h3 className="font-semibold mb-3">💡 Tips to grow your store</h3>
-        <ul className="space-y-2 text-sm text-foreground/70">
-          <li className="flex items-start gap-2">
-            <span className="text-accent">•</span>
-            Share your store link in your Instagram bio
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-accent">•</span>
-            Add products that match your content niche
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-accent">•</span>
-            Keep your store fresh by adding new products regularly
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-accent">•</span>
-            Mention products in your stories and posts
-          </li>
-        </ul>
-      </Card>
-    </div>
+      <motion.div variants={fadeInUp}>
+        <Card>
+          <h3 className="font-semibold mb-3">💡 Tips to grow your store</h3>
+          <ul className="space-y-2 text-sm text-[#888]">
+            <li className="flex items-start gap-2">
+              <span className="text-accent">•</span>
+              Share your store link in your Instagram bio
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-accent">•</span>
+              Add products that match your content niche
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-accent">•</span>
+              Keep your store fresh by adding new products regularly
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-accent">•</span>
+              Mention products in your stories and posts
+            </li>
+          </ul>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -450,14 +520,14 @@ function StoreProductCard({ product }: { product: CatalogProduct }) {
   const categoryLabel = NICHE_OPTIONS.find(n => n.value === product.category)?.label || product.category;
   
   return (
-    <div className="bg-card border border-border rounded-xl p-3 hover:border-accent/30 transition-colors">
-      <div className="w-full h-24 bg-gradient-to-br from-border to-border/30 rounded-lg mb-3 flex items-center justify-center">
-        <span className="text-2xl opacity-40">📦</span>
+    <div className="bg-[#111] border border-[#222] rounded-xl p-3 hover:border-[#333] transition-colors">
+      <div className="w-full h-24 bg-[#0a0a0a] border border-[#222] rounded-lg mb-3 flex items-center justify-center">
+        <Icon name="box" size={24} className="text-[#333]" />
       </div>
       <h4 className="font-medium text-sm line-clamp-1 mb-1">{product.name}</h4>
-      <p className="text-xs text-foreground/50 mb-2">{categoryLabel}</p>
+      <p className="text-xs text-[#666] mb-2">{categoryLabel}</p>
       <div className="flex items-center justify-between">
-        <span className="font-bold text-accent">₹{product.price.toLocaleString()}</span>
+        <span className="font-semibold text-accent">₹{product.price.toLocaleString()}</span>
         <Badge variant="accent" size="sm">{product.commission}%</Badge>
       </div>
     </div>
@@ -488,41 +558,59 @@ function DiscoverTab() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div 
+        className="flex items-center justify-between"
+        variants={fadeInUp}
+      >
         <div>
           <h3 className="text-lg font-semibold">Discover Products</h3>
-          <p className="text-sm text-foreground/60">
+          <p className="text-sm text-[#888]">
             Products matching your niches: {profile?.niches.map(n => 
               NICHE_OPTIONS.find(opt => opt.value === n)?.label
             ).join(', ')}
           </p>
       </div>
         <Badge variant="info">{availableProducts.length} available</Badge>
-        </div>
+      </motion.div>
 
       {availableProducts.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {availableProducts.map((product) => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-              showActions={true}
-              onAccept={() => handleAccept(product.id)}
-              onReject={() => handleReject(product.id)}
-            />
-            ))}
-          </div>
-        ) : (
-        <EmptyState 
-          icon="search" 
-          title="No new products" 
-          description={products.length === 0 
-            ? "No products have been uploaded by brands yet. Check back later!" 
-            : "You've reviewed all available products. Check back later for more!"}
-        />
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          variants={staggerContainer}
+        >
+          {availableProducts.map((product, index) => (
+            <motion.div 
+              key={product.id}
+              variants={fadeInUp}
+              transition={{ delay: index * 0.05 }}
+            >
+              <ProductCard 
+                product={product} 
+                showActions={true}
+                onAccept={() => handleAccept(product.id)}
+                onReject={() => handleReject(product.id)}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+      ) : (
+        <motion.div variants={fadeInUp}>
+          <EmptyState 
+            icon="search" 
+            title="No new products" 
+            description={products.length === 0 
+              ? "No products have been uploaded by brands yet. Check back later!" 
+              : "You've reviewed all available products. Check back later for more!"}
+          />
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -542,35 +630,53 @@ function MyProductsTab() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-      <div>
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div 
+        className="flex items-center justify-between"
+        variants={fadeInUp}
+      >
+        <div>
           <h3 className="text-lg font-semibold">My Products</h3>
-          <p className="text-sm text-foreground/60">Products you&apos;ve chosen to promote</p>
+          <p className="text-sm text-[#888]">Products you&apos;ve chosen to promote</p>
       </div>
         <Badge variant="success">{acceptedProducts.length} products</Badge>
-      </div>
+      </motion.div>
 
       {acceptedProducts.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {acceptedProducts.map((product) => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-              showActions={true}
-              isAccepted={true}
-              onRemove={() => handleRemove(product.id)}
-            />
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          variants={staggerContainer}
+        >
+          {acceptedProducts.map((product, index) => (
+            <motion.div 
+              key={product.id}
+              variants={fadeInUp}
+              transition={{ delay: index * 0.05 }}
+            >
+              <ProductCard 
+                product={product} 
+                showActions={true}
+                isAccepted={true}
+                onRemove={() => handleRemove(product.id)}
+              />
+            </motion.div>
           ))}
-        </div>
-        ) : (
+        </motion.div>
+      ) : (
+        <motion.div variants={fadeInUp}>
           <EmptyState 
-          icon="shopping-bag" 
-          title="No products yet" 
-          description="Accept products from Discover to add them here" 
-        />
+            icon="shopping-bag" 
+            title="No products yet" 
+            description="Accept products from Discover to add them here" 
+          />
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -596,36 +702,54 @@ function SkippedTab() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <motion.div 
+      className="space-y-6"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div 
+        className="flex items-center justify-between"
+        variants={fadeInUp}
+      >
                   <div>
           <h3 className="text-lg font-semibold">Previously Skipped</h3>
-          <p className="text-sm text-foreground/60">Products you passed on - you can reconsider them</p>
+          <p className="text-sm text-[#888]">Products you passed on - you can reconsider them</p>
                   </div>
         <Badge variant="default">{skippedProducts.length} skipped</Badge>
-                </div>
+      </motion.div>
 
       {skippedProducts.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {skippedProducts.map((product) => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-              showActions={true}
-              isSkipped={true}
-              onReconsider={() => handleReconsider(product.id)}
-              onAccept={() => handleAccept(product.id)}
-            />
-            ))}
-          </div>
-        ) : (
-        <EmptyState 
-          icon="check-circle" 
-          title="No skipped products" 
-          description="Products you skip will appear here" 
-        />
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          variants={staggerContainer}
+        >
+          {skippedProducts.map((product, index) => (
+            <motion.div 
+              key={product.id}
+              variants={fadeInUp}
+              transition={{ delay: index * 0.05 }}
+            >
+              <ProductCard 
+                product={product} 
+                showActions={true}
+                isSkipped={true}
+                onReconsider={() => handleReconsider(product.id)}
+                onAccept={() => handleAccept(product.id)}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+      ) : (
+        <motion.div variants={fadeInUp}>
+          <EmptyState 
+            icon="check-circle" 
+            title="No skipped products" 
+            description="Products you skip will appear here" 
+          />
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -656,10 +780,13 @@ function ProductCard({
   const categoryLabel = NICHE_OPTIONS.find(n => n.value === product.category)?.label || product.category;
 
   return (
-    <Card hover className="flex flex-col">
+    <motion.div 
+      className="bg-[#111] border border-[#222] rounded-2xl p-5 flex flex-col hover:border-[#333] transition-colors"
+      whileHover={{ y: -2 }}
+    >
       {/* Product Image Placeholder */}
-      <div className="w-full h-40 bg-gradient-to-br from-border to-border/50 rounded-lg mb-4 flex items-center justify-center">
-        <span className="text-4xl opacity-50">📦</span>
+      <div className="w-full h-40 bg-[#0a0a0a] border border-[#222] rounded-xl mb-4 flex items-center justify-center">
+        <Icon name="box" size={40} className="text-[#333]" />
         </div>
 
       {/* Product Info */}
@@ -668,22 +795,22 @@ function ProductCard({
           <h4 className="font-semibold line-clamp-2">{product.name}</h4>
           <Badge variant="accent" size="sm">{product.commission}%</Badge>
         </div>
-        <p className="text-sm text-foreground/60 mb-2">by {product.brandName}</p>
+        <p className="text-sm text-[#888] mb-2">by {product.brandName}</p>
         <Badge variant="default" size="sm">{categoryLabel}</Badge>
-        <p className="text-sm text-foreground/60 mt-2 line-clamp-2">{product.description}</p>
-        <p className="text-lg font-bold text-accent mt-3">₹{product.price.toLocaleString()}</p>
-        </div>
+        <p className="text-sm text-[#666] mt-2 line-clamp-2">{product.description}</p>
+        <p className="text-lg font-semibold text-accent mt-3">₹{product.price.toLocaleString()}</p>
+      </div>
 
       {/* Actions */}
       {showActions && (
-        <div className="flex gap-2 mt-4 pt-4 border-t border-border">
+        <div className="flex gap-2 mt-4 pt-4 border-t border-[#222]">
           {isAccepted ? (
             <Button variant="outline" size="sm" className="flex-1" onClick={onRemove}>
               Remove
             </Button>
           ) : isSkipped ? (
             <>
-              <Button variant="outline" size="sm" className="flex-1" onClick={onReconsider}>
+              <Button variant="ghost" size="sm" className="flex-1" onClick={onReconsider}>
                 Skip Again
               </Button>
               <Button size="sm" className="flex-1" onClick={onAccept}>
@@ -701,7 +828,7 @@ function ProductCard({
             </>
           )}
     </div>
-        )}
-      </Card>
+      )}
+    </motion.div>
   );
 }

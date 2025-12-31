@@ -61,6 +61,7 @@ export default function InfluencerDashboard() {
         <PageContainer>
           {activeTab === 'overview' && <OverviewTab />}
           {activeTab === 'profile' && <ProfileTab />}
+          {activeTab === 'store' && <StoreTab />}
           {activeTab === 'discover' && <DiscoverTab />}
           {activeTab === 'my-products' && <MyProductsTab />}
           {activeTab === 'skipped' && <SkippedTab />}
@@ -123,10 +124,10 @@ function OverviewTab() {
               {nicheLabels.map((niche, i) => (
                 <Badge key={i} variant="accent" size="md">{niche}</Badge>
               ))}
-            </div>
           </div>
-        </div>
-      </Card>
+          </div>
+      </div>
+        </Card>
 
       {/* Recent Accepted Products */}
       <Card>
@@ -201,7 +202,7 @@ function ProfileTab() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
+  
   return (
     <div className="space-y-6">
       {/* Store URL Card */}
@@ -250,13 +251,13 @@ function ProfileTab() {
         <Card>
           <h3 className="font-semibold mb-4">Profile Details</h3>
           <div className="space-y-4">
-            <Input 
+                <Input 
               label="Display Name" 
               value={formData.displayName} 
               disabled={!editing} 
               onChange={(e) => setFormData({ ...formData, displayName: e.target.value })} 
             />
-            <Input 
+                <Input 
               label="Social Handle" 
               value={formData.socialHandle} 
               disabled={!editing} 
@@ -284,7 +285,7 @@ function ProfileTab() {
           {editing ? (
             <div className="grid grid-cols-2 gap-2">
               {NICHE_OPTIONS.map((niche) => (
-                <button
+          <button 
                   key={niche.value}
                   type="button"
                   onClick={() => handleNicheToggle(niche.value)}
@@ -295,9 +296,9 @@ function ProfileTab() {
                   }`}
                 >
                   {niche.label}
-                </button>
+          </button>
               ))}
-            </div>
+        </div>
           ) : (
             <div className="flex flex-wrap gap-2">
               {nicheLabels.length > 0 ? (
@@ -307,9 +308,157 @@ function ProfileTab() {
               ) : (
                 <p className="text-foreground/50">No niches selected</p>
               )}
-            </div>
+          </div>
           )}
-        </Card>
+      </Card>
+      </div>
+    </div>
+  );
+}
+
+// ============================================
+// Store Tab - Preview of public store
+// ============================================
+function StoreTab() {
+  const { profile } = useInfluencerStore();
+  const { getAcceptedProducts } = useProductStore();
+  const [copied, setCopied] = useState(false);
+  
+  const acceptedProducts = profile ? getAcceptedProducts(profile.userId) : [];
+  
+  const nicheLabels = profile?.niches.map(n => 
+    NICHE_OPTIONS.find(opt => opt.value === n)?.label || n
+  ) || [];
+
+  const storeUrl = typeof window !== 'undefined' 
+    ? `${window.location.origin}/store/${profile?.userId}` 
+    : `/store/${profile?.userId}`;
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(storeUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Store URL & Actions */}
+      <Card className="bg-gradient-to-r from-orange-500/10 to-pink-500/10 border-orange-500/30">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h3 className="font-semibold text-lg mb-1">🏪 Your Public Store</h3>
+            <p className="text-sm text-foreground/60">This is what your followers see when they visit your store</p>
+        </div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <code className="px-3 py-2 bg-background/50 rounded-lg text-sm text-foreground/80 border border-border max-w-[300px] truncate">
+              {storeUrl}
+            </code>
+            <Button size="sm" onClick={handleCopyLink}>
+              {copied ? '✓ Copied!' : 'Copy Link'}
+            </Button>
+            <a href={storeUrl} target="_blank" rel="noopener noreferrer">
+              <Button variant="gradient" size="sm">Open Store ↗</Button>
+            </a>
+          </div>
+        </div>
+      </Card>
+
+      {/* Store Preview */}
+      <Card padding="lg">
+        <div className="border border-border rounded-xl overflow-hidden bg-background">
+          {/* Preview Header */}
+          <div className="bg-gradient-to-r from-card to-card/80 p-6 border-b border-border">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold">
+                {profile?.displayName?.charAt(0) || 'U'}
+    </div>
+      <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <h2 className="text-xl font-bold">{profile?.displayName}</h2>
+                  {profile?.verified && <Badge variant="success" size="sm">Verified</Badge>}
+                  </div>
+                <p className="text-accent">{profile?.socialHandle}</p>
+                  </div>
+                </div>
+            {profile?.bio && (
+              <p className="text-foreground/70 mt-4 max-w-2xl">{profile.bio}</p>
+            )}
+            <div className="flex flex-wrap gap-2 mt-4">
+              {nicheLabels.map((niche, i) => (
+                <Badge key={i} variant="accent" size="sm">{niche}</Badge>
+              ))}
+                  </div>
+                  </div>
+
+          {/* Products Preview */}
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold">Products ({acceptedProducts.length})</h3>
+                  </div>
+            
+            {acceptedProducts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {acceptedProducts.slice(0, 8).map((product) => (
+                  <StoreProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+              <div className="text-center py-12 text-foreground/50">
+                <div className="text-4xl mb-3">📦</div>
+                <p className="font-medium">No products in your store yet</p>
+                <p className="text-sm">Accept products from the Discover tab to add them here</p>
+      </div>
+            )}
+
+            {acceptedProducts.length > 8 && (
+              <div className="text-center mt-6">
+                <Badge variant="info">+{acceptedProducts.length - 8} more products</Badge>
+                  </div>
+            )}
+          </div>
+        </div>
+      </Card>
+
+      {/* Tips Card */}
+      <Card>
+        <h3 className="font-semibold mb-3">💡 Tips to grow your store</h3>
+        <ul className="space-y-2 text-sm text-foreground/70">
+          <li className="flex items-start gap-2">
+            <span className="text-accent">•</span>
+            Share your store link in your Instagram bio
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-accent">•</span>
+            Add products that match your content niche
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-accent">•</span>
+            Keep your store fresh by adding new products regularly
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-accent">•</span>
+            Mention products in your stories and posts
+          </li>
+        </ul>
+      </Card>
+    </div>
+  );
+}
+
+// Store Product Card (simplified for store preview)
+function StoreProductCard({ product }: { product: CatalogProduct }) {
+  const categoryLabel = NICHE_OPTIONS.find(n => n.value === product.category)?.label || product.category;
+  
+  return (
+    <div className="bg-card border border-border rounded-xl p-3 hover:border-accent/30 transition-colors">
+      <div className="w-full h-24 bg-gradient-to-br from-border to-border/30 rounded-lg mb-3 flex items-center justify-center">
+        <span className="text-2xl opacity-40">📦</span>
+      </div>
+      <h4 className="font-medium text-sm line-clamp-1 mb-1">{product.name}</h4>
+      <p className="text-xs text-foreground/50 mb-2">{categoryLabel}</p>
+      <div className="flex items-center justify-between">
+        <span className="font-bold text-accent">₹{product.price.toLocaleString()}</span>
+        <Badge variant="accent" size="sm">{product.commission}%</Badge>
       </div>
     </div>
   );
@@ -348,9 +497,9 @@ function DiscoverTab() {
               NICHE_OPTIONS.find(opt => opt.value === n)?.label
             ).join(', ')}
           </p>
-        </div>
-        <Badge variant="info">{availableProducts.length} available</Badge>
       </div>
+        <Badge variant="info">{availableProducts.length} available</Badge>
+        </div>
 
       {availableProducts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -362,9 +511,9 @@ function DiscoverTab() {
               onAccept={() => handleAccept(product.id)}
               onReject={() => handleReject(product.id)}
             />
-          ))}
-        </div>
-      ) : (
+            ))}
+          </div>
+        ) : (
         <EmptyState 
           icon="search" 
           title="No new products" 
@@ -395,10 +544,10 @@ function MyProductsTab() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
+      <div>
           <h3 className="text-lg font-semibold">My Products</h3>
           <p className="text-sm text-foreground/60">Products you&apos;ve chosen to promote</p>
-        </div>
+      </div>
         <Badge variant="success">{acceptedProducts.length} products</Badge>
       </div>
 
@@ -414,8 +563,8 @@ function MyProductsTab() {
             />
           ))}
         </div>
-      ) : (
-        <EmptyState 
+        ) : (
+          <EmptyState 
           icon="shopping-bag" 
           title="No products yet" 
           description="Accept products from Discover to add them here" 
@@ -449,12 +598,12 @@ function SkippedTab() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
+                  <div>
           <h3 className="text-lg font-semibold">Previously Skipped</h3>
           <p className="text-sm text-foreground/60">Products you passed on - you can reconsider them</p>
-        </div>
+                  </div>
         <Badge variant="default">{skippedProducts.length} skipped</Badge>
-      </div>
+                </div>
 
       {skippedProducts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -467,9 +616,9 @@ function SkippedTab() {
               onReconsider={() => handleReconsider(product.id)}
               onAccept={() => handleAccept(product.id)}
             />
-          ))}
-        </div>
-      ) : (
+            ))}
+          </div>
+        ) : (
         <EmptyState 
           icon="check-circle" 
           title="No skipped products" 
@@ -511,7 +660,7 @@ function ProductCard({
       {/* Product Image Placeholder */}
       <div className="w-full h-40 bg-gradient-to-br from-border to-border/50 rounded-lg mb-4 flex items-center justify-center">
         <span className="text-4xl opacity-50">📦</span>
-      </div>
+        </div>
 
       {/* Product Info */}
       <div className="flex-1">
@@ -523,7 +672,7 @@ function ProductCard({
         <Badge variant="default" size="sm">{categoryLabel}</Badge>
         <p className="text-sm text-foreground/60 mt-2 line-clamp-2">{product.description}</p>
         <p className="text-lg font-bold text-accent mt-3">₹{product.price.toLocaleString()}</p>
-      </div>
+        </div>
 
       {/* Actions */}
       {showActions && (
@@ -551,8 +700,8 @@ function ProductCard({
               </Button>
             </>
           )}
-        </div>
-      )}
-    </Card>
+    </div>
+        )}
+      </Card>
   );
 }

@@ -28,13 +28,14 @@ import {
 // Navigation & Tab Configurations
 // ============================================
 
-export type InfluencerTab = 'overview' | 'profile' | 'discover' | 'my-products' | 'skipped';
+export type InfluencerTab = 'overview' | 'profile' | 'store' | 'discover' | 'my-products' | 'skipped';
 export type BrandTab = 'overview' | 'profile' | 'products';
 export type AdminTab = 'overview' | 'users' | 'products' | 'campaigns' | 'messaging' | 'analytics' | 'payments' | 'moderation' | 'system';
 
 export const INFLUENCER_TABS: { id: InfluencerTab; label: string; icon: string }[] = [
   { id: 'overview', label: 'Overview', icon: 'dashboard' },
   { id: 'profile', label: 'Profile', icon: 'user' },
+  { id: 'store', label: 'My Store', icon: 'building' },
   { id: 'discover', label: 'Discover Products', icon: 'search' },
   { id: 'my-products', label: 'My Products', icon: 'shopping-bag' },
   { id: 'skipped', label: 'Skipped', icon: 'x-circle' },

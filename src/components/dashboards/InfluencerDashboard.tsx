@@ -155,6 +155,7 @@ function OverviewTab() {
 function ProfileTab() {
   const { profile, updateProfile } = useInfluencerStore();
   const [editing, setEditing] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [formData, setFormData] = useState({
     displayName: profile?.displayName || '',
     socialHandle: profile?.socialHandle || '',
@@ -191,8 +192,39 @@ function ProfileTab() {
     NICHE_OPTIONS.find(opt => opt.value === n)?.label || n
   ) || [];
 
+  const storeUrl = typeof window !== 'undefined' 
+    ? `${window.location.origin}/store/${profile?.userId}` 
+    : `/store/${profile?.userId}`;
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(storeUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="space-y-6">
+      {/* Store URL Card */}
+      <Card className="bg-gradient-to-r from-orange-500/10 to-pink-500/10 border-orange-500/30">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h3 className="font-semibold mb-1">Your Public Store</h3>
+            <p className="text-sm text-foreground/60">Share this link with your followers so they can shop your picks</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <code className="px-3 py-2 bg-background/50 rounded-lg text-sm text-foreground/80 border border-border">
+              {storeUrl}
+            </code>
+            <Button size="sm" onClick={handleCopyLink}>
+              {copied ? '✓ Copied!' : 'Copy Link'}
+            </Button>
+            <a href={storeUrl} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" size="sm">View Store</Button>
+            </a>
+          </div>
+        </div>
+      </Card>
+
       <Card>
         <div className="flex items-start gap-6 flex-wrap">
           <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center text-white text-3xl font-bold">

@@ -1,6 +1,6 @@
 "use client";
 
-import { SVGProps } from 'react';
+import React, { SVGProps } from 'react';
 
 type IconProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -530,7 +530,7 @@ export function IconDress(props: IconProps) {
 // Icon Map for dynamic rendering
 // ============================================
 
-export const IconMap: Record<string, (props: IconProps) => JSX.Element> = {
+export const IconMap: Record<string, (props: IconProps) => React.JSX.Element> = {
   dashboard: IconDashboard,
   user: IconUser,
   users: IconUsers,

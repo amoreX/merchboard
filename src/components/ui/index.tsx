@@ -446,14 +446,16 @@ interface Column<T> {
 }
 
 interface TableProps<T> {
-  columns: Column<T>[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  columns: Column<any>[];
   data: T[];
   keyExtractor: (item: T) => string;
   onRowClick?: (item: T) => void;
   emptyMessage?: string;
 }
 
-export function Table<T extends Record<string, unknown>>({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function Table<T extends Record<string, any>>({
   columns,
   data,
   keyExtractor,

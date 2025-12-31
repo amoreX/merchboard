@@ -36,9 +36,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         if (!result.success) {
           const fieldErrors: Record<string, string> = {};
-          result.error.errors.forEach((err) => {
-            if (err.path[0]) {
-              fieldErrors[err.path[0] as string] = err.message;
+          result.error.issues.forEach((issue) => {
+            if (issue.path[0]) {
+              fieldErrors[issue.path[0] as string] = issue.message;
             }
           });
           setErrors(fieldErrors);
@@ -55,9 +55,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         if (!result.success) {
           const fieldErrors: Record<string, string> = {};
-          result.error.errors.forEach((err) => {
-            if (err.path[0]) {
-              fieldErrors[err.path[0] as string] = err.message;
+          result.error.issues.forEach((issue) => {
+            if (issue.path[0]) {
+              fieldErrors[issue.path[0] as string] = issue.message;
             }
           });
           setErrors(fieldErrors);
